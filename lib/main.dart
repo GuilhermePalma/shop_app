@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:shop/pages/product_details_page.dart';
 import 'package:shop/pages/products_overview_page.dart';
+import 'package:shop/utils/routes.dart';
 
 void main() {
   runApp(const MyApp());
@@ -18,7 +20,11 @@ class MyApp extends StatelessWidget {
         colorScheme: const ColorScheme.light(primary: Colors.purple)
             .copyWith(secondary: Colors.deepOrange),
       ),
-      home: ProductsOverviewPage(),
+      routes: {
+        Routes.routeMain: (ctx) => ProductsOverviewPage(),
+        Routes.routeProductDetails: (ctx) => const ProductDetailsPage(),
+      },
+      initialRoute: Routes.routeMain,
     );
   }
 }
