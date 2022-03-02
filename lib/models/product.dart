@@ -1,4 +1,6 @@
-class Product {
+import 'package:flutter/material.dart';
+
+class Product with ChangeNotifier {
   final String id;
   final String name;
   final String description;
@@ -16,5 +18,8 @@ class Product {
   });
 
   /// Altera o valor de Favorito do Produto
-  void toggleFavorite() => isFavorite = !isFavorite;
+  void toggleFavorite() {
+    isFavorite = !isFavorite;
+    notifyListeners();
+  }
 }
