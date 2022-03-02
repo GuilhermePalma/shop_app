@@ -24,11 +24,12 @@ class ProductGrid extends StatelessWidget {
         mainAxisSpacing: 10, // Espaço entre os Elementos (Vertical |)
       ),
       itemBuilder: (ctx, index) {
-        // ChangeNotifierProvider será o responsavel por Gerenciar Alterações no Product
-        return ChangeNotifierProvider(
-        create: (_) => loadedProducts.elementAt(index),
-        child: const ProductItem(),
-      );
+        /* ChangeNotifierProvider utiliza do Provider já criado para
+            gerenciar Alterações no Product */
+        return ChangeNotifierProvider.value(
+          value: loadedProducts.elementAt(index),
+          child: const ProductItem(),
+        );
       },
     );
   }

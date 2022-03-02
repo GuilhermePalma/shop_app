@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
               .copyWith(secondary: Colors.deepOrange),
         ),
         routes: {
-          Routes.routeMain: (ctx) => ProductsOverviewPage(),
+          Routes.routeMain: (ctx) => const ProductsOverviewPage(),
           Routes.routeProductDetails: (ctx) => const ProductDetailsPage(),
         },
         initialRoute: Routes.routeMain,
