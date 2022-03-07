@@ -8,11 +8,7 @@ class ProductList with ChangeNotifier {
   /// Retorna um Clone da Lista com os Produtos Salvos
   List<Product> get productsList => [..._items];
 
-  /// Adiciona um Produto na Lista
-  void addProduct(Product product) {
-    _items.add(product);
-
-    // Notifica que ocorreu uma mudança
-    notifyListeners();
-  }
+  /// Retorna os Produtos Favoritos do Usuario
+  List<Product> get productsFavoritesList =>
+      [..._items.where((productItem) => productItem.isFavorite).toList()];
 }
