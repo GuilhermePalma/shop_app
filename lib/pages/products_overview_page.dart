@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/components/badge.dart';
 import 'package:shop/components/product_grid.dart';
+import 'package:shop/providers/cart.dart';
 import 'package:shop/providers/product_list.dart';
 
 /// Enumeração com as Opções do Menu Superior
@@ -21,8 +23,6 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ProductList>(context);
-
     return Scaffold(
       appBar: AppBar(
         title: const Text("Minha Loja"),
@@ -43,6 +43,18 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
               setState(() =>
                   _showFavoritesOnly = selectedValue == FilterOptions.favorite);
             },
+          ),
+          Consumer<Cart>(
+            // Child define um Item Imutavel
+            child: IconButton(
+              onPressed: () {},
+              icon: const Icon(Icons.shopping_cart_rounded),
+            ),
+            // Constroi um Widget que pode sofrer alterações
+            builder: (ctx, cart, child) => Badge(
+              value: cart.itemCount.toString(),
+              child: child!,
+            ),
           ),
         ],
       ),

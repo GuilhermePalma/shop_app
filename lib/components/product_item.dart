@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/models/product.dart';
+import 'package:shop/providers/cart.dart';
 import 'package:shop/utils/routes.dart';
 
 class ProductItem extends StatelessWidget {
@@ -9,10 +10,12 @@ class ProductItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // Obtem o Produto pelo Provider, mas desativa a Notificação de Alterações
-    final Product product = Provider.of<Product>(
+    final Product productOfProvider = Provider.of<Product>(
       context,
       listen: false,
     );
+
+    final Cart cartProvider = Provider.of<Cart>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),
@@ -20,10 +23,10 @@ class ProductItem extends StatelessWidget {
         child: GestureDetector(
           onTap: () => Navigator.of(context).pushNamed(
             Routes.routeProductDetails,
-            arguments: product,
+            arguments: productOfProvider,
           ),
           child: Image.network(
-            product.imageURL,
+            productOfProvider.imageURL,
             fit: BoxFit.cover,
             errorBuilder: (context, error, stackTrace) {
               return Image.asset("assets/images/error_404.jpg");
@@ -33,25 +36,25 @@ class ProductItem extends StatelessWidget {
         footer: GridTileBar(
           backgroundColor: Colors.black87,
           title: Text(
-            product.name,
+            productOfProvider.name,
             textAlign: TextAlign.center,
           ),
           leading: Consumer<Product>(
             // Insere o Provider no Icone de Favorito, já que só há alteração de estado nele
             builder: (ctx, productItem, _) => IconButton(
               icon: Icon(
-                product.isFavorite
+                productOfProvider.isFavorite
                     ? Icons.favorite_rounded
                     : Icons.favorite_outline_rounded,
-                color: product.isFavorite
+                color: productOfProvider.isFavorite
                     ? Theme.of(context).colorScheme.secondary
                     : Colors.white,
               ),
-              onPressed: () => product.toggleFavorite(),
+              onPressed: () => productOfProvider.toggleFavorite(),
             ),
           ),
           trailing: IconButton(
-            onPressed: () {},
+            onPressed: () => cartProvider.addItem(productOfProvider),
             icon: const Icon(
               Icons.shopping_cart_outlined,
             ),
