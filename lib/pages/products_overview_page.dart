@@ -4,6 +4,7 @@ import 'package:shop/components/badge.dart';
 import 'package:shop/components/product_grid.dart';
 import 'package:shop/providers/cart.dart';
 import 'package:shop/providers/product_list.dart';
+import 'package:shop/utils/routes.dart';
 
 /// Enumeração com as Opções do Menu Superior
 enum FilterOptions {
@@ -47,7 +48,8 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
           Consumer<Cart>(
             // Child define um Item Imutavel
             child: IconButton(
-              onPressed: () {},
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(Routes.routeCartPage),
               icon: const Icon(Icons.shopping_cart_rounded),
             ),
             // Constroi um Widget que pode sofrer alterações
