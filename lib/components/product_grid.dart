@@ -19,25 +19,35 @@ class ProductGrid extends StatelessWidget {
         ? provider.productsFavoritesList
         : provider.productsList;
 
-    return GridView.builder(
-      itemCount: loadedProducts.length,
-      padding: const EdgeInsets.all(10.0),
-      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-        crossAxisCount: 2, // Elementos por Linha
-        childAspectRatio: 3 / 2, // Relação Entra Altura e Largura
-        crossAxisSpacing: 10, // Espaço entre os Elementos (Horizontal -)
-        mainAxisSpacing: 10, // Espaço entre os Elementos (Vertical |)
-      ),
-      itemBuilder: (ctx, index) {
-        /* ChangeNotifierProvider utiliza do Provider já criado para
+    return loadedProducts.isEmpty
+        ? const Center(
+            child: Text(
+              "Não Há Itens para ser Exibidos !",
+              style: TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          )
+        : GridView.builder(
+            itemCount: loadedProducts.length,
+            padding: const EdgeInsets.all(10.0),
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2, // Elementos por Linha
+              childAspectRatio: 3 / 2, // Relação Entra Altura e Largura
+              crossAxisSpacing: 10, // Espaço entre os Elementos (Horizontal -)
+              mainAxisSpacing: 10, // Espaço entre os Elementos (Vertical |)
+            ),
+            itemBuilder: (ctx, index) {
+              /* ChangeNotifierProvider utiliza do Provider já criado para
             gerenciar Alterações no Product */
-        return ChangeNotifierProvider.value(
-          value: loadedProducts.elementAt(index),
-          // Sem o const no Contrutor para não dar erro na Listagem Dinamica
-          // ignore: prefer_const_constructors
-          child: ProductItem(),
-        );
-      },
-    );
+              return ChangeNotifierProvider.value(
+                value: loadedProducts.elementAt(index),
+                // Sem o const no Contrutor para não dar erro na Listagem Dinamica
+                // ignore: prefer_const_constructors
+                child: ProductItem(),
+              );
+            },
+          );
   }
 }
