@@ -9,8 +9,10 @@ class CartPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final CartProvider cartProvider = Provider.of<CartProvider>(context);
-    final itemsCart = cartProvider.items.values.toList();
+    final CartProvider _cartProvider = Provider.of<CartProvider>(context);
+    final _itemsCart = _cartProvider.items.values.toList();
+
+    final bool _isEmptyCart = _cartProvider.itemCount <= 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -32,7 +34,7 @@ class CartPage extends StatelessWidget {
                   const SizedBox(width: 10),
                   Chip(
                     label: Text(
-                      "R\$${cartProvider.totalAmout.toStringAsFixed(2)}",
+                      "R\$${_cartProvider.totalAmout.toStringAsFixed(2)}",
                       style: TextStyle(
                         color:
                             Theme.of(context).primaryTextTheme.headline6?.color,
@@ -43,20 +45,22 @@ class CartPage extends StatelessWidget {
                   const Spacer(),
                   TextButton(
                     onPressed: () {
-                      if (cartProvider.itemCount > 0) {
-                        Provider.of<OrdersProvider>(context, listen: false)
-                            .addOrder(cartProvider);
-                        cartProvider.clear();
-                      } else {
+                      if (_isEmptyCart) {
+                        /// Configura e exibe a SnackBAr
                         final snackBar = SnackBar(
                           backgroundColor: Theme.of(context)
                               .colorScheme
                               .primary
                               .withOpacity(0.6),
-                          content:
-                              const Text('Não Há Itens no Carrinho de Compras'),
+                          content: const Text(
+                            'Não é possivel realizar uma Compra com o Carrinho Vazio',
+                          ),
                         );
                         ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      } else {
+                        Provider.of<OrdersProvider>(context, listen: false)
+                            .addOrder(_cartProvider);
+                        _cartProvider.clear();
                       }
                     },
                     child: const Text("COMPRAR"),
@@ -71,15 +75,25 @@ class CartPage extends StatelessWidget {
             ),
           ),
           Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: ListView.builder(
-                itemCount: cartProvider.itemCount,
-                itemBuilder: (ctx, index) => CartItem(
-                  cartItem: itemsCart.elementAt(index),
-                ),
-              ),
-            ),
+            child: _isEmptyCart
+                ? const Center(
+                    child: Text(
+                      "Não Há Itens no Carrinho !",
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  )
+                : Padding(
+                    padding: const EdgeInsets.all(20.0),
+                    child: ListView.builder(
+                      itemCount: _cartProvider.itemCount,
+                      itemBuilder: (ctx, index) => CartItem(
+                        cartItem: _itemsCart.elementAt(index),
+                      ),
+                    ),
+                  ),
           ),
         ],
       ),
