@@ -1,5 +1,6 @@
 class Routes {
-  static const routeMain = "main";
-  static const routeProductDetails = "productDetails";
-  static const routeCartPage = "cartPage";
+  static const routeMain = "/";
+  static const routeProductDetails = "/productDetails";
+  static const routeCartPage = "/cartPage";
+  static const routeOrders = "/orders";
 }
