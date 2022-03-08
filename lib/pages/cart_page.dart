@@ -44,31 +44,14 @@ class CartPage extends StatelessWidget {
                   ),
                   const Spacer(),
                   TextButton(
-                    onPressed: () {
-                      if (_isEmptyCart) {
-                        /// Configura e exibe a SnackBAr
-                        final snackBar = SnackBar(
-                          backgroundColor: Theme.of(context)
-                              .colorScheme
-                              .primary
-                              .withOpacity(0.6),
-                          content: const Text(
-                            'Não é possivel realizar uma Compra com o Carrinho Vazio',
-                          ),
-                        );
-                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
-                      } else {
-                        Provider.of<OrdersProvider>(context, listen: false)
-                            .addOrder(_cartProvider);
-                        _cartProvider.clear();
-                      }
-                    },
                     child: const Text("COMPRAR"),
                     style: TextButton.styleFrom(
                       textStyle: TextStyle(
                         color: Theme.of(context).colorScheme.primary,
                       ),
                     ),
+                    onPressed: () =>
+                        onClickBuy(context, _isEmptyCart, _cartProvider),
                   ),
                 ],
               ),
@@ -98,5 +81,27 @@ class CartPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  /// Metodo Responsavel por Tratar o Processo de Finalização da
+  /// compra dos Itens do Carrinhi
+  void onClickBuy(
+      BuildContext context, bool _isEmptyCart, CartProvider cartProvider) {
+    String textSnackBar;
+    if (_isEmptyCart) {
+      textSnackBar = 'Não é possivel realizar uma Compra com o Carrinho Vazio';
+    } else {
+      Provider.of<OrdersProvider>(context, listen: false)
+          .addOrder(cartProvider);
+      cartProvider.clear();
+      textSnackBar = 'Compra Realizada com Sucesso !';
+    }
+
+    // Configura e Exibe a Mensagem do SnackBar
+    final snackBar = SnackBar(
+      backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.6),
+      content: Text(textSnackBar),
+    );
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
