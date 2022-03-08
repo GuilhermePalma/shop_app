@@ -43,9 +43,21 @@ class CartPage extends StatelessWidget {
                   const Spacer(),
                   TextButton(
                     onPressed: () {
-                      Provider.of<OrdersProvider>(context, listen: false)
-                          .addOrder(cartProvider);
-                      cartProvider.clear();
+                      if (cartProvider.itemCount > 0) {
+                        Provider.of<OrdersProvider>(context, listen: false)
+                            .addOrder(cartProvider);
+                        cartProvider.clear();
+                      } else {
+                        final snackBar = SnackBar(
+                          backgroundColor: Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.6),
+                          content:
+                              const Text('Não Há Itens no Carrinho de Compras'),
+                        );
+                        ScaffoldMessenger.of(context).showSnackBar(snackBar);
+                      }
                     },
                     child: const Text("COMPRAR"),
                     style: TextButton.styleFrom(
