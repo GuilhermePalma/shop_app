@@ -1,13 +1,13 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:shop/models/cart_item.dart';
-import 'package:shop/models/product.dart';
+import 'package:shop/models/entities/cart.dart';
+import 'package:shop/models/entities/product.dart';
 
-class Cart extends ChangeNotifier {
-  Map<String, CartItem> _items = {};
+class CartProvider extends ChangeNotifier {
+  Map<String, Cart> _items = {};
 
-  Map<String, CartItem> get items => {..._items};
+  Map<String, Cart> get items => {..._items};
 
   int get itemCount {
     return _items.length;
@@ -23,7 +23,7 @@ class Cart extends ChangeNotifier {
   void addItem(Product product) {
     if (_items.containsKey(product.id)) {
       _items.update(product.id, (existingValue) {
-        return CartItem(
+        return Cart(
           id: existingValue.id,
           productId: existingValue.productId,
           nameProduct: existingValue.nameProduct,
@@ -34,7 +34,7 @@ class Cart extends ChangeNotifier {
     } else {
       _items.putIfAbsent(
         product.id,
-        () => CartItem(
+        () => Cart(
           // TODO Mudar Id
           id: Random().nextDouble().toString(),
           productId: product.id,

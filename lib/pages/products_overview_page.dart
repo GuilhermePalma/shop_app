@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/components/badge.dart';
 import 'package:shop/components/custom_drawer.dart';
 import 'package:shop/components/product_grid.dart';
-import 'package:shop/providers/cart.dart';
-import 'package:shop/providers/product_list.dart';
+import 'package:shop/models/providers/cart_provider.dart';
 import 'package:shop/utils/routes.dart';
 
 /// Enumeração com as Opções do Menu Superior
@@ -29,7 +28,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
       appBar: AppBar(
         title: const Text("Minha Loja"),
         actions: [
-          Consumer<Cart>(
+          Consumer<CartProvider>(
             // Child define um Item Imutavel
             child: IconButton(
               onPressed: () =>

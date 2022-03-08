@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/components/custom_drawer.dart';
-import 'package:shop/components/order_item_widget.dart';
-import 'package:shop/providers/order_list.dart';
+import 'package:shop/components/order_item.dart';
+import 'package:shop/models/providers/orders_provider.dart';
 import 'package:shop/utils/routes.dart';
 
 class OrdersPage extends StatelessWidget {
@@ -10,7 +10,7 @@ class OrdersPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final orderProvider = Provider.of<OrderList>(context);
+    final orderProvider = Provider.of<OrdersProvider>(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -20,7 +20,7 @@ class OrdersPage extends StatelessWidget {
       body: ListView.builder(
         itemCount: orderProvider.itemsCount,
         itemBuilder: (ctx, index) =>
-            OrderItemWidget(order: orderProvider.items.elementAt(index)),
+            OrderItem(order: orderProvider.items.elementAt(index)),
       ),
     );
   }

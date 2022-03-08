@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/models/product.dart';
-import 'package:shop/providers/cart.dart';
+import 'package:shop/models/entities/product.dart';
+import 'package:shop/models/providers/cart_provider.dart';
 import 'package:shop/utils/routes.dart';
 
 class ProductItem extends StatelessWidget {
@@ -15,7 +15,7 @@ class ProductItem extends StatelessWidget {
       listen: false,
     );
 
-    final Cart cartProvider = Provider.of<Cart>(context, listen: false);
+    final CartProvider cartProvider = Provider.of<CartProvider>(context, listen: false);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(10),

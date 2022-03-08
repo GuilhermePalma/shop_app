@@ -4,9 +4,9 @@ import 'package:shop/pages/cart_page.dart';
 import 'package:shop/pages/orders_page.dart';
 import 'package:shop/pages/product_details_page.dart';
 import 'package:shop/pages/products_overview_page.dart';
-import 'package:shop/providers/cart.dart';
-import 'package:shop/providers/order_list.dart';
-import 'package:shop/providers/product_list.dart';
+import 'package:shop/models/providers/cart_provider.dart';
+import 'package:shop/models/providers/orders_provider.dart';
+import 'package:shop/models/providers/products_provider.dart';
 import 'package:shop/utils/routes.dart';
 
 void main() => runApp(const MyApp());
@@ -18,9 +18,9 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => ProductList()),
-        ChangeNotifierProvider(create: (_) => Cart()),
-        ChangeNotifierProvider(create: (_) => OrderList()),
+        ChangeNotifierProvider(create: (_) => ProductsProvider()),
+        ChangeNotifierProvider(create: (_) => CartProvider()),
+        ChangeNotifierProvider(create: (_) => OrdersProvider()),
       ],
       child: MaterialApp(
         title: 'Shop APP',

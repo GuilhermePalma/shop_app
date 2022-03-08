@@ -1,9 +1,9 @@
-import 'package:shop/models/cart_item.dart';
+import 'package:shop/models/entities/cart.dart';
 
 class Order {
   final String id;
   final double total;
-  final List<CartItem> products;
+  final List<Cart> products;
   final DateTime date;
   Order({
     required this.id,
