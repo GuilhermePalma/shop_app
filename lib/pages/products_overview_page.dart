@@ -28,6 +28,19 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
       appBar: AppBar(
         title: const Text("Minha Loja"),
         actions: [
+          Consumer<Cart>(
+            // Child define um Item Imutavel
+            child: IconButton(
+              onPressed: () =>
+                  Navigator.of(context).pushNamed(Routes.routeCartPage),
+              icon: const Icon(Icons.shopping_cart_rounded),
+            ),
+            // Constroi um Widget que pode sofrer alterações
+            builder: (ctx, cart, child) => Badge(
+              value: cart.itemCount.toString(),
+              child: child!,
+            ),
+          ),
           PopupMenuButton(
             icon: const Icon(Icons.more_vert_rounded),
             itemBuilder: (_) => [
@@ -44,19 +57,6 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
               setState(() =>
                   _showFavoritesOnly = selectedValue == FilterOptions.favorite);
             },
-          ),
-          Consumer<Cart>(
-            // Child define um Item Imutavel
-            child: IconButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(Routes.routeCartPage),
-              icon: const Icon(Icons.shopping_cart_rounded),
-            ),
-            // Constroi um Widget que pode sofrer alterações
-            builder: (ctx, cart, child) => Badge(
-              value: cart.itemCount.toString(),
-              child: child!,
-            ),
           ),
         ],
       ),
