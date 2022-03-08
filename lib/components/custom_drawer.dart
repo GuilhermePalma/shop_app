@@ -2,7 +2,21 @@ import 'package:flutter/material.dart';
 import 'package:shop/utils/routes.dart';
 
 class CustomDrawer extends StatelessWidget {
-  const CustomDrawer({Key? key}) : super(key: key);
+  final String namePage;
+  CustomDrawer({Key? key, required this.namePage}) : super(key: key);
+
+  final List<Map<String, Object>> _itemsMenu = [
+    {
+      "title": "Loja",
+      "icon": Icons.shopping_bag_outlined,
+      "route": Routes.routeMain
+    },
+    {
+      "title": "Pagamentos",
+      "icon": Icons.payment_outlined,
+      "route": Routes.routeOrders
+    },
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -14,20 +28,16 @@ class CustomDrawer extends StatelessWidget {
             automaticallyImplyLeading: false,
           ),
           const Divider(),
-          ListTile(
-            leading: const Icon(Icons.shopping_bag_outlined),
-            title: const Text("Loja"),
-            onTap: () {
-              Navigator.of(context).pushReplacementNamed(Routes.routeMain);
-            },
-          ),
-          ListTile(
-            leading: const Icon(Icons.payment_outlined),
-            title: const Text("Pagamentos"),
-            onTap: () {
-              Navigator.of(context).pushReplacementNamed(Routes.routeOrders);
-            },
-          ),
+          ..._itemsMenu.map((item) {
+            return ListTile(
+              selected: (item["route"] as String) == namePage,
+              leading: Icon(item["icon"] as IconData),
+              title: Text(item["title"] as String),
+              onTap: () => Navigator.of(context).pushReplacementNamed(
+                item["route"] as String,
+              ),
+            );
+          }).toList(),
         ],
       ),
     );

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/components/custom_drawer.dart';
 import 'package:shop/components/order_item_widget.dart';
 import 'package:shop/providers/order_list.dart';
+import 'package:shop/utils/routes.dart';
 
 class OrdersPage extends StatelessWidget {
   const OrdersPage({Key? key}) : super(key: key);
@@ -15,7 +16,7 @@ class OrdersPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text("Meus Pedidos"),
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(namePage: Routes.routeOrders),
       body: ListView.builder(
         itemCount: orderProvider.itemsCount,
         itemBuilder: (ctx, index) =>

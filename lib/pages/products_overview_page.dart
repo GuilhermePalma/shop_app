@@ -61,7 +61,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
           ),
         ],
       ),
-      drawer: const CustomDrawer(),
+      drawer: CustomDrawer(namePage: Routes.routeMain),
       body: ProductGrid(showFavoriteOnly: _showFavoritesOnly),
     );
   }
