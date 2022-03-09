@@ -38,19 +38,27 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
   /// Metodo Responsavel por Atualizar o Estado da Imagem
   /// a partir da atualização da Interface Grafica
-  void _updateImage() => setState(() {});
+  void _updateImage() {
+    setState(() {});
+  }
 
   /// Metodo Responsavel por controlar a Submição do Formulario
   void _submitForm() {
-    // Por meio da Key no Formulario, acessa a Informação Save de cada um
-    _formKey.currentState?.save();
-    final newProduct = Product(
-      id: Random().nextDouble.toString(),
-      name: _formData["name"] as String,
-      description: _formData["description"] as String,
-      price: _formData["price"] as double,
-      imageURL: _formData["imageUrl"] as String,
-    );
+    // Obtem o Valor da Validação dos validator dos TextFormField
+    final bool isValid = _formKey.currentState?.validate() ?? false;
+
+    if (isValid) {
+      // Por meio da Key no Formulario, acessa a Informação Save de cada um
+      _formKey.currentState?.save();
+
+      final newProduct = Product(
+        id: Random().nextDouble.toString(),
+        name: _formData["name"] as String,
+        description: _formData["description"] as String,
+        price: _formData["price"] as double,
+        imageURL: _formData["imageUrl"] as String,
+      );
+    }
   }
 
   @override
@@ -77,6 +85,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 onFieldSubmitted: (_) =>
                     FocusScope.of(context).requestFocus(_priceFocus),
                 onSaved: (nameValue) => _formData["name"] = nameValue ?? "",
+                validator: (nameValue) => Product.validateName(nameValue),
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: "Preço"),
@@ -89,6 +98,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 onSaved: (priceValue) {
                   _formData["price"] = double.parse(priceValue ?? "0");
                 },
+                validator: (priceValue) => Product.validatePrice(priceValue),
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: "Descrição"),
@@ -98,6 +108,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 onSaved: (descriptionValue) {
                   _formData["description"] = descriptionValue ?? "";
                 },
+                validator: (descriptionValue) =>
+                    Product.validateDescription(descriptionValue),
               ),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.end,
@@ -112,6 +124,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       onSaved: (imageUrlValue) {
                         _formData["imageUrl"] = imageUrlValue ?? "";
                       },
+                      validator: (urlValue) =>
+                          Product.validateImageURL(urlValue),
                       onFieldSubmitted: (_) => _submitForm(),
                     ),
                   ),
