@@ -33,6 +33,28 @@ class CartItem extends StatelessWidget {
           listen: false,
         ).removeItem(cartItem.productId);
       },
+
+      /// Retorna um evento Futuro (Booleano)
+      confirmDismiss: (_) {
+        /// Retorna um Dialog confirmando ou não a Exclusão
+        return showDialog<bool>(
+          context: context,
+          builder: (ctx) => AlertDialog(
+            title: const Text("Confirmar Exclusão"),
+            content: const Text("Você deseja exlcuir o Item do Carrinho ?"),
+            actions: [
+              TextButton(
+                child: const Text("Não Excluir"),
+                onPressed: () => Navigator.of(context).pop(false),
+              ),
+              TextButton(
+                child: const Text("Excluir"),
+                onPressed: () => Navigator.of(context).pop(true),
+              ),
+            ],
+          ),
+        );
+      },
       child: Card(
         margin: const EdgeInsets.symmetric(vertical: 4),
         child: Padding(

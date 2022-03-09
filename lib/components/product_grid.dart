@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:shop/components/product_item.dart';
+import 'package:shop/components/product_grid_item.dart';
 import 'package:shop/models/entities/product.dart';
 import 'package:shop/models/providers/products_provider.dart';
 
@@ -45,7 +45,7 @@ class ProductGrid extends StatelessWidget {
                 value: loadedProducts.elementAt(index),
                 // Sem o const no Contrutor para não dar erro na Listagem Dinamica
                 // ignore: prefer_const_constructors
-                child: ProductItem(),
+                child: ProductGridItem(),
               );
             },
           );
