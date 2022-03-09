@@ -20,11 +20,17 @@ class ProductItem extends StatelessWidget {
         child: Row(
           children: [
             IconButton(
-              icon: const Icon(Icons.edit_rounded),
+              icon: Icon(
+                Icons.edit_rounded,
+                color: Theme.of(context).colorScheme.primary,
+              ),
               onPressed: () {},
             ),
             IconButton(
-              icon: const Icon(Icons.delete_rounded),
+              icon: Icon(
+                Icons.delete_rounded,
+                color: Theme.of(context).errorColor,
+              ),
               onPressed: () {},
             ),
           ],
