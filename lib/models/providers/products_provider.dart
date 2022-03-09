@@ -52,11 +52,13 @@ class ProductsProvider with ChangeNotifier {
     bool hasId = productData.containsKey("id") && productData["id"] != null;
 
     final Product product = Product(
-      id: hasId ? productData["id"] as String : Product.generateIdItem,
-      name: productData["name"] as String,
-      description: productData["description"] as String,
-      price: productData["price"] as double,
-      imageURL: productData["imageUrl"] as String,
+      id: hasId
+          ? productData[Product.paramID] as String
+          : Product.generateIdItem,
+      name: productData[Product.paramName] as String,
+      description: productData[Product.paramDescription] as String,
+      price: productData[Product.paramPrice] as double,
+      imageURL: productData[Product.paramImageURL] as String,
     );
 
     // Atualiza ou Insere o Produto

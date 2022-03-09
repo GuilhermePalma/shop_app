@@ -34,11 +34,11 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
       if (argumentProduct != null) {
         final Product product = argumentProduct as Product;
-        _formData["id"] = product.id;
-        _formData["name"] = product.name;
-        _formData["description"] = product.description;
-        _formData["price"] = product.price;
-        _formData["imageUrl"] = product.imageURL;
+        _formData[Product.paramID] = product.id;
+        _formData[Product.paramName] = product.name;
+        _formData[Product.paramDescription] = product.description;
+        _formData[Product.paramPrice] = product.price;
+        _formData[Product.paramImageURL] = product.imageURL;
         _imageUrlController.text = product.imageURL;
       }
     }
@@ -92,16 +92,17 @@ class _ProductFormPageState extends State<ProductFormPage> {
           child: ListView(
             children: [
               TextFormField(
-                initialValue: _formData["name"]?.toString(),
+                initialValue: _formData[Product.paramName]?.toString(),
                 decoration: const InputDecoration(labelText: "Nome"),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) =>
                     FocusScope.of(context).requestFocus(_priceFocus),
-                onSaved: (nameValue) => _formData["name"] = nameValue ?? "",
+                onSaved: (nameValue) =>
+                    _formData[Product.paramName] = nameValue ?? "",
                 validator: (nameValue) => Product.validateName(nameValue),
               ),
               TextFormField(
-                initialValue: _formData["price"]?.toString(),
+                initialValue: _formData[Product.paramPrice]?.toString(),
                 decoration: const InputDecoration(labelText: "Preço"),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
@@ -110,18 +111,19 @@ class _ProductFormPageState extends State<ProductFormPage> {
                     FocusScope.of(context).requestFocus(_descriptionFocus),
                 textInputAction: TextInputAction.next,
                 onSaved: (priceValue) {
-                  _formData["price"] = double.parse(priceValue ?? "0");
+                  _formData[Product.paramPrice] =
+                      double.parse(priceValue ?? "0");
                 },
                 validator: (priceValue) => Product.validatePrice(priceValue),
               ),
               TextFormField(
-                initialValue: _formData["description"]?.toString(),
+                initialValue: _formData[Product.paramDescription]?.toString(),
                 decoration: const InputDecoration(labelText: "Descrição"),
                 keyboardType: TextInputType.multiline,
                 maxLines: 3,
                 focusNode: _descriptionFocus,
                 onSaved: (descriptionValue) {
-                  _formData["description"] = descriptionValue ?? "";
+                  _formData[Product.paramDescription] = descriptionValue ?? "";
                 },
                 validator: (descriptionValue) =>
                     Product.validateDescription(descriptionValue),
@@ -138,7 +140,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                       controller: _imageUrlController,
                       textInputAction: TextInputAction.done,
                       onSaved: (imageUrlValue) {
-                        _formData["imageUrl"] = imageUrlValue ?? "";
+                        _formData[Product.paramImageURL] = imageUrlValue ?? "";
                       },
                       validator: (urlValue) =>
                           Product.validateImageURL(urlValue),

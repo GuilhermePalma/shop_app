@@ -4,6 +4,13 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 class Product with ChangeNotifier {
+
+  static const paramID = "id";
+  static const paramName= "name";
+  static const paramDescription = "description";
+  static const paramPrice = "price";
+  static const paramImageURL = "imageURL";
+
   final String id;
   final String name;
   final String description;
