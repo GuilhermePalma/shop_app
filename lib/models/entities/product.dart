@@ -1,4 +1,7 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Product with ChangeNotifier {
   final String id;
@@ -74,5 +77,11 @@ class Product with ChangeNotifier {
     } else {
       return null;
     }
+  }
+
+  /// Gera um ID utilizando o Nome da Classe, Hora Atual, e um Numero Aleatorio
+  static String get generateIdItem {
+    String dateNowFormated = DateFormat("DDMMy_H_m_s").format(DateTime.now());
+    return "product_" + dateNowFormated + Random().nextInt(3999).toString();
   }
 }

@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:shop/models/entities/product.dart';
 
@@ -17,7 +15,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
   final _imageUrlController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
-  final _formData = Map<String, Object>();
+  final Map<String, Object> _formData = {};
 
   /// Metodo que Iniciará os Itens Utilizados
   @override
@@ -52,7 +50,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
       _formKey.currentState?.save();
 
       final newProduct = Product(
-        id: Random().nextDouble.toString(),
+        id: Product.generateIdItem,
         name: _formData["name"] as String,
         description: _formData["description"] as String,
         price: _formData["price"] as double,

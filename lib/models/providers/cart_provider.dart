@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:shop/models/entities/cart.dart';
 import 'package:shop/models/entities/product.dart';
@@ -35,8 +33,7 @@ class CartProvider extends ChangeNotifier {
       _items.putIfAbsent(
         product.id,
         () => Cart(
-          // TODO Mudar Id
-          id: Random().nextDouble().toString(),
+          id: Cart.generateIdItem,
           productId: product.id,
           nameProduct: product.name,
           quantityProducts: 1,
