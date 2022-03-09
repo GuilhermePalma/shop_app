@@ -21,10 +21,21 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Exclui um Product da Lista
+  void deleteProduct(Product product) {
+    int indexProduct =
+        _items.indexWhere((itemList) => itemList.id == product.id);
+    if (indexProduct >= 0) {
+      _items.removeAt(indexProduct);
+      notifyListeners();
+    }
+  }
+
   /// Atualiza um Product na Lista por meio do seu ID
   void updateProduct(Product product) {
     // Obtem o Index com o Id Informado
-    int indexProduct = _items.indexWhere((p) => p.id == product.id);
+    int indexProduct =
+        _items.indexWhere((itemList) => itemList.id == product.id);
 
     // Inclui ou Atualiza o Produto na Lista
     if (indexProduct < 0) {

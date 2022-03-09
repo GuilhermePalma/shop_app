@@ -26,6 +26,24 @@ class _ProductFormPageState extends State<ProductFormPage> {
     _imageUrlFocus.addListener(_updateImage);
   }
 
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_formData.isEmpty) {
+      final argumentProduct = ModalRoute.of(context)?.settings.arguments;
+
+      if (argumentProduct != null) {
+        final Product product = argumentProduct as Product;
+        _formData["id"] = product.id;
+        _formData["name"] = product.name;
+        _formData["description"] = product.description;
+        _formData["price"] = product.price;
+        _formData["imageUrl"] = product.imageURL;
+        _imageUrlController.text = product.imageURL;
+      }
+    }
+  }
+
   /// Metodo que "Libera" os Itens Utilizados
   @override
   void dispose() {
@@ -36,11 +54,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
     _imageUrlFocus.removeListener(_updateImage);
   }
 
-  /// Metodo Responsavel por Atualizar o Estado da Imagem
-  /// a partir da atualização da Interface Grafica
-  void _updateImage() {
-    setState(() {});
-  }
+  /// Metodo Responsavel por Atualizar o Estado da Imagem (Update all UI)
+  void _updateImage() => setState(() {});
 
   /// Metodo Responsavel por controlar a Submição do Formulario
   void _submitForm() {
@@ -77,6 +92,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
           child: ListView(
             children: [
               TextFormField(
+                initialValue: _formData["name"]?.toString(),
                 decoration: const InputDecoration(labelText: "Nome"),
                 textInputAction: TextInputAction.next,
                 onFieldSubmitted: (_) =>
@@ -85,6 +101,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 validator: (nameValue) => Product.validateName(nameValue),
               ),
               TextFormField(
+                initialValue: _formData["price"]?.toString(),
                 decoration: const InputDecoration(labelText: "Preço"),
                 keyboardType:
                     const TextInputType.numberWithOptions(decimal: true),
@@ -98,6 +115,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 validator: (priceValue) => Product.validatePrice(priceValue),
               ),
               TextFormField(
+                initialValue: _formData["description"]?.toString(),
                 decoration: const InputDecoration(labelText: "Descrição"),
                 keyboardType: TextInputType.multiline,
                 maxLines: 3,
@@ -113,7 +131,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
                 children: [
                   Expanded(
                     child: TextFormField(
-                      decoration: const InputDecoration(labelText: "Descrição"),
+                      decoration:
+                          const InputDecoration(labelText: "URL da Imagem"),
                       keyboardType: TextInputType.url,
                       focusNode: _imageUrlFocus,
                       controller: _imageUrlController,
