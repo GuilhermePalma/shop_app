@@ -9,12 +9,17 @@ class CustomDrawer extends StatelessWidget {
     {
       "title": "Loja",
       "icon": Icons.shopping_bag_outlined,
-      "route": Routes.routeMain
+      "route": Routes.routeMain,
     },
     {
       "title": "Pagamentos",
       "icon": Icons.payment_outlined,
-      "route": Routes.routeOrders
+      "route": Routes.routeOrders,
+    },
+    {
+      "title": "Gerenciar Produtos",
+      "icon": Icons.edit_rounded,
+      "route": Routes.routeManagerProducts,
     },
   ];
 

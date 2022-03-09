@@ -11,4 +11,7 @@ class ProductsProvider with ChangeNotifier {
   /// Retorna os Produtos Favoritos do Usuario
   List<Product> get productsFavoritesList =>
       [..._items.where((productItem) => productItem.isFavorite).toList()];
+
+  /// Obtem a Quantidade de Itens presentes na Lista
+  int get itemsCount => _items.length;
 }
