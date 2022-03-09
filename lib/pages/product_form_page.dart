@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:shop/models/entities/product.dart';
+import 'package:shop/models/providers/products_provider.dart';
 
 class ProductFormPage extends StatefulWidget {
   const ProductFormPage({Key? key}) : super(key: key);
@@ -49,13 +51,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
       // Por meio da Key no Formulario, acessa a Informação Save de cada um
       _formKey.currentState?.save();
 
-      final newProduct = Product(
-        id: Product.generateIdItem,
-        name: _formData["name"] as String,
-        description: _formData["description"] as String,
-        price: _formData["price"] as double,
-        imageURL: _formData["imageUrl"] as String,
-      );
+      // Provider fora do metodo Build (Por conta do Context), demanda o Listen = false
+      Provider.of<ProductsProvider>(context, listen: false)
+          .addProductFromData(_formData);
+      Navigator.of(context).pop();
     }
   }
 
