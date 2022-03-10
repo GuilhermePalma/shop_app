@@ -8,10 +8,6 @@ import 'package:shop/models/providers/cart_provider.dart';
 import 'package:shop/utils/urls.dart';
 
 class OrdersProvider extends ChangeNotifier {
-  static const String paramTotal = "totalOrder";
-  static const String paramDate = "dateTimeNow";
-  static const String paramProducts = "products";
-
   List<Order> _items = [];
 
   List<Order> get items => [..._items];
@@ -19,36 +15,40 @@ class OrdersProvider extends ChangeNotifier {
   int get itemsCount => _items.length;
 
   Future<void> addOrder(CartProvider cart) async {
-    final dateNow = DateTime.now();
+    Order order = Order.fromCart(cart);
 
-    final resposneAPI = await http.post(
+    final responseAPI = await http.post(
       Uri.parse("${Urls.urlOrders}.json"),
-      body: jsonEncode({
-        paramTotal: cart.totalAmout,
-        paramDate: dateNow.toIso8601String(),
-        paramProducts:
-            cart.items.values.map((product) => product.toMap()).toList()
-      }),
+      body: order.toJson(),
     );
 
-    if (resposneAPI.statusCode < 400 && resposneAPI.body != "null") {
-      final idOrder = jsonDecode(resposneAPI.body)["name"];
+    if (responseAPI.statusCode < 400 && responseAPI.body != "null") {
+      final idOrder = jsonDecode(responseAPI.body)["name"];
 
-      _items.insert(
-        0,
-        Order(
-          id: idOrder,
-          total: cart.totalAmout,
-          date: dateNow,
-          products: cart.items.values.toList(),
-        ),
-      );
-
+      _items.insert(0, order.copyWith(id: idOrder));
       notifyListeners();
     } else {
       throw (HttpExceptions(
         message: "Não foi Possivel Efetuar a Transação",
-        statusCode: resposneAPI.statusCode,
+        statusCode: responseAPI.statusCode,
+      ));
+    }
+  }
+
+  Future<void> loadedOrders() async {
+    final responseAPI = await http.get(Uri.parse("${Urls.urlOrders}.json"));
+
+    if (responseAPI.statusCode < 400 && responseAPI.body != "null") {
+      Map<String, dynamic> dataJson = jsonDecode(responseAPI.body);
+      dataJson.forEach((id, valueOrder) {
+        _items.add(Order.fromMap(valueOrder).copyWith(id: id));
+      });
+
+      notifyListeners();
+    } else {
+      throw (HttpExceptions(
+        message: "Não foi Possivel Obter as Transações",
+        statusCode: responseAPI.statusCode,
       ));
     }
   }
