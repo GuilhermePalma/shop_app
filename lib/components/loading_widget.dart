@@ -12,7 +12,7 @@ class LoadingWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.center,
         children: const [
           Text(
-            "Aguarde Enquanto Carregamos os Dados",
+            "Aguarde Enquanto Processamos os Dados",
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 17,
