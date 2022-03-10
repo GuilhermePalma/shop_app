@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/components/badge.dart';
 import 'package:shop/components/custom_drawer.dart';
+import 'package:shop/components/loading_widget.dart';
 import 'package:shop/components/product_grid.dart';
 import 'package:shop/models/providers/cart_provider.dart';
 import 'package:shop/models/providers/products_provider.dart';
@@ -72,7 +73,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
       ),
       drawer: CustomDrawer(namePage: Routes.routeMain),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const LoadingWidget()
           : ProductGrid(showFavoriteOnly: _showFavoritesOnly),
     );
   }

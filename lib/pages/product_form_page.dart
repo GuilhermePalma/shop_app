@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/components/loading_widget.dart';
 import 'package:shop/models/entities/product.dart';
 import 'package:shop/models/providers/products_provider.dart';
 
@@ -112,9 +113,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
         ],
       ),
       body: _isLoading
-          ? const Center(
-              child: CircularProgressIndicator(),
-            )
+          ? const LoadingWidget()
           : Padding(
               padding: const EdgeInsets.all(15.0),
               child: Form(
