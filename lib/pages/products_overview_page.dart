@@ -24,14 +24,25 @@ class ProductsOverviewPage extends StatefulWidget {
 class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
   bool _showFavoritesOnly = false;
   bool _isLoading = true;
+  ProductsProvider? productsProvider;
 
   @override
   void initState() {
     super.initState();
-    Provider.of<ProductsProvider>(context, listen: false)
-        .loadedProducts()
-        .then((_) => setState(() => _isLoading = false));
+
+    productsProvider = Provider.of<ProductsProvider>(context, listen: false);
+
+    // Somente Obtem os Itens, caso a Lista esteja Vazia
+    if (productsProvider!.itemsCount == 0) {
+      productsProvider!
+          .loadedProducts()
+          .then((_) => setState(() => _isLoading = false));
+    } else {
+      setState(() => _isLoading = false);
+    }
   }
+
+  Future<void> _onRefreshProducts() => productsProvider!.loadedProducts();
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +85,10 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
       drawer: CustomDrawer(namePage: Routes.routeMain),
       body: _isLoading
           ? const LoadingWidget()
-          : ProductGrid(showFavoriteOnly: _showFavoritesOnly),
+          : RefreshIndicator(
+              onRefresh: _onRefreshProducts,
+              child: ProductGrid(showFavoriteOnly: _showFavoritesOnly),
+            ),
     );
   }
 }

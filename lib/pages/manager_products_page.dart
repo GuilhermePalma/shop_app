@@ -9,6 +9,9 @@ import 'package:shop/utils/routes.dart';
 class ManagerProductsPage extends StatelessWidget {
   const ManagerProductsPage({Key? key}) : super(key: key);
 
+  Future<void> _onRefreshProducts(BuildContext context) =>
+      Provider.of<ProductsProvider>(context, listen: false).loadedProducts();
+
   @override
   Widget build(BuildContext context) {
     final List<Product> productsList =
@@ -26,16 +29,19 @@ class ManagerProductsPage extends StatelessWidget {
         ],
       ),
       drawer: CustomDrawer(namePage: Routes.routeManagerProducts),
-      body: ListView.builder(
-        itemCount: productsList.length,
-        itemBuilder: (ctx, index) => Column(
-          children: [
-            ProductItem(product: productsList.elementAt(index)),
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Divider(),
-            ),
-          ],
+      body: RefreshIndicator(
+        onRefresh: () => _onRefreshProducts(context),
+        child: ListView.builder(
+          itemCount: productsList.length,
+          itemBuilder: (ctx, index) => Column(
+            children: [
+              ProductItem(product: productsList.elementAt(index)),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0),
+                child: Divider(),
+              ),
+            ],
+          ),
         ),
       ),
     );

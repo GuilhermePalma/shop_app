@@ -2,14 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop/data/dummy_data.dart';
 import 'package:shop/models/entities/product.dart';
 
 class ProductsProvider with ChangeNotifier {
   // TODO ALTERAR
   final String _baseUrlApi =
       "https://app-shop-flutter-default-rtdb.firebaseio.com";
-  final List<Product> _items = dummyProducts;
+  List<Product> _items =[];
 
   /// Retorna um Clone da Lista com os Produtos Salvos
   List<Product> get productsList => [..._items];
