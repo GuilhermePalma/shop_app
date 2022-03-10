@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/models/entities/product.dart';
 import 'package:shop/models/providers/products_provider.dart';
 import 'package:shop/utils/routes.dart';
@@ -46,6 +47,7 @@ class ProductItem extends StatelessWidget {
   }
 
   void deleteProduct(BuildContext context) {
+    final msg = ScaffoldMessenger.of(context);
     showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -64,13 +66,19 @@ class ProductItem extends StatelessWidget {
           ),
         ],
       ),
-    ).then(
-      (confirmDelete) {
-        if (confirmDelete!) {
-          Provider.of<ProductsProvider>(context, listen: false)
+    ).then((confirmDelete) async {
+      if (confirmDelete!) {
+        try {
+          await Provider.of<ProductsProvider>(context, listen: false)
               .deleteProduct(product);
+        } on HttpExceptions catch (error) {
+          msg.showSnackBar(
+            SnackBar(
+              content: Text(error.toString()),
+            ),
+          );
         }
-      },
-    );
+      }
+    });
   }
 }
