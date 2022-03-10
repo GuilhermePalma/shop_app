@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/components/button_carrt.dart';
 import 'package:shop/components/cart_item.dart';
 import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/models/providers/cart_provider.dart';
@@ -12,8 +13,6 @@ class CartPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final CartProvider _cartProvider = Provider.of<CartProvider>(context);
     final _itemsCart = _cartProvider.items.values.toList();
-
-    final bool _isEmptyCart = _cartProvider.itemCount <= 0;
 
     return Scaffold(
       appBar: AppBar(
@@ -44,22 +43,13 @@ class CartPage extends StatelessWidget {
                     backgroundColor: Theme.of(context).colorScheme.primary,
                   ),
                   const Spacer(),
-                  TextButton(
-                    child: const Text("COMPRAR"),
-                    style: TextButton.styleFrom(
-                      textStyle: TextStyle(
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                    onPressed: () =>
-                        onClickBuy(context, _isEmptyCart, _cartProvider),
-                  ),
+                  ButtonCart(cartProvider: _cartProvider),
                 ],
               ),
             ),
           ),
           Expanded(
-            child: _isEmptyCart
+            child: _cartProvider.itemCount <= 0
                 ? const Center(
                     child: Text(
                       "Não Há Itens no Carrinho !",
