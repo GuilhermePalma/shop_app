@@ -6,9 +6,9 @@ import 'package:shop/models/entities/product.dart';
 
 class ProductsProvider with ChangeNotifier {
   // TODO ALTERAR
-  final String _baseUrlApi =
-      "https://app-shop-flutter-default-rtdb.firebaseio.com";
-  List<Product> _items =[];
+  final String _baseUrlProduct =
+      "https://app-shop-flutter-default-rtdb.firebaseio.com/products";
+  List<Product> _items = [];
 
   /// Retorna um Clone da Lista com os Produtos Salvos
   List<Product> get productsList => [..._items];
@@ -22,7 +22,7 @@ class ProductsProvider with ChangeNotifier {
 
   /// Obtem os Produtos Cadastrados na API
   Future<void> loadedProducts() async {
-    final responseAPI = await http.get(Uri.parse("$_baseUrlApi/products.json"));
+    final responseAPI = await http.get(Uri.parse("$_baseUrlProduct.json"));
 
     if (responseAPI.body == 'null') return;
 
@@ -44,7 +44,7 @@ class ProductsProvider with ChangeNotifier {
   Future<void> addProduct(Product product) async {
     // await é utilizado em itens marcados como async. Ele espera o Future ser concluido
     final responseAPI = await http.post(
-      Uri.parse("$_baseUrlApi/products.json"),
+      Uri.parse("$_baseUrlProduct.json"),
       body: product.copyWith(id: "").toJson(),
     );
 
@@ -64,7 +64,7 @@ class ProductsProvider with ChangeNotifier {
   }
 
   /// Atualiza um Product na Lista por meio do seu ID
-  Future<void> updateProduct(Product product) {
+  Future<void> updateProduct(Product product) async {
     // Obtem o Index com o Id Informado
     int indexProduct =
         _items.indexWhere((itemList) => itemList.id == product.id);
@@ -73,6 +73,11 @@ class ProductsProvider with ChangeNotifier {
     if (indexProduct < 0) {
       addProduct(product);
     } else {
+      await http.patch(
+        Uri.parse("$_baseUrlProduct/${product.id}.json"),
+        body: product.copyWith(id: "").toJson(),
+      );
+
       _items.removeAt(indexProduct);
       _items.insert(indexProduct, product);
       notifyListeners();

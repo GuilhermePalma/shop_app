@@ -112,7 +112,6 @@ class Product with ChangeNotifier {
       paramDescription: description,
       paramPrice: price,
       paramImageURL: imageURL,
-      paramIsFavorite: isFavorite,
     };
   }
 
