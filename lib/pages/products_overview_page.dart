@@ -4,6 +4,7 @@ import 'package:shop/components/badge.dart';
 import 'package:shop/components/custom_drawer.dart';
 import 'package:shop/components/product_grid.dart';
 import 'package:shop/models/providers/cart_provider.dart';
+import 'package:shop/models/providers/products_provider.dart';
 import 'package:shop/utils/routes.dart';
 
 /// Enumeração com as Opções do Menu Superior
@@ -21,6 +22,15 @@ class ProductsOverviewPage extends StatefulWidget {
 
 class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
   bool _showFavoritesOnly = false;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Provider.of<ProductsProvider>(context, listen: false)
+        .loadedProducts()
+        .then((_) => setState(() => _isLoading = false));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,7 +71,9 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
         ],
       ),
       drawer: CustomDrawer(namePage: Routes.routeMain),
-      body: ProductGrid(showFavoriteOnly: _showFavoritesOnly),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : ProductGrid(showFavoriteOnly: _showFavoritesOnly),
     );
   }
 }

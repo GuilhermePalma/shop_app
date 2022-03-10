@@ -21,6 +21,27 @@ class ProductsProvider with ChangeNotifier {
   /// Obtem a Quantidade de Itens presentes na Lista
   int get itemsCount => _items.length;
 
+  /// Obtem os Produtos Cadastrados na API
+  Future<void> loadedProducts() async {
+    final responseAPI = await http.get(Uri.parse("$_baseUrlApi/products.json"));
+
+    if (responseAPI.body == 'null') return;
+
+    Map<String, dynamic> dataJson = jsonDecode(responseAPI.body);
+    dataJson.forEach((productId, productData) {
+      _items.add(
+        Product(
+          id: productId,
+          name: productData[Product.paramName],
+          description: productData[Product.paramDescription],
+          price: productData[Product.paramPrice],
+          imageURL: productData[Product.paramImageURL],
+        ),
+      );
+    });
+    notifyListeners();
+  }
+
   /// Adiciona um Product na Lista e na API
   /// Por ser aync, ele obrigatoriamente tem que retornar um Future. Com isso,  a solicitação na
   /// API, retorna um void de Forma Assincrona.
@@ -29,7 +50,6 @@ class ProductsProvider with ChangeNotifier {
     final responseAPI = await http.post(
       Uri.parse("$_baseUrlApi/products.json"),
       body: jsonEncode({
-        Product.paramID: product.id,
         Product.paramName: product.name,
         Product.paramPrice: product.price,
         Product.paramDescription: product.description,
