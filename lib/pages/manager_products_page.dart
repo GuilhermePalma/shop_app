@@ -10,7 +10,7 @@ class ManagerProductsPage extends StatelessWidget {
   const ManagerProductsPage({Key? key}) : super(key: key);
 
   Future<void> _onRefreshProducts(BuildContext context) =>
-      Provider.of<ProductsProvider>(context, listen: false).loadedProducts();
+      Provider.of<ProductsProvider>(context, listen: false).refreshProducts();
 
   @override
   Widget build(BuildContext context) {

@@ -10,10 +10,13 @@ import 'package:shop/utils/urls.dart';
 class OrdersProvider extends ChangeNotifier {
   List<Order> _items = [];
 
+  /// Retorna a Lista de Order
   List<Order> get items => [..._items];
 
+  /// Retorna o Tamanho da Lista de Order
   int get itemsCount => _items.length;
 
+  /// Adiciona uma Order na Lista e na API
   Future<void> addOrder(CartProvider cart) async {
     Order order = Order.fromCart(cart);
 
@@ -35,6 +38,7 @@ class OrdersProvider extends ChangeNotifier {
     }
   }
 
+  /// Metodo responsavel por obter as Orders da API
   Future<void> loadedOrders() async {
     final responseAPI = await http.get(Uri.parse("${Urls.urlOrders}.json"));
 
@@ -51,5 +55,11 @@ class OrdersProvider extends ChangeNotifier {
         statusCode: responseAPI.statusCode,
       ));
     }
+  }
+
+  /// Metodo responsavel por Recarregar a Lista de Orders
+  Future<void> refreshOrders() {
+    _items = [];
+    return loadedOrders();
   }
 }

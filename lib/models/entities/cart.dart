@@ -51,8 +51,8 @@ class Cart {
       id: map[paramID] ?? '',
       productId: map[paramProductID] ?? '',
       nameProduct: map[paramNameProduct] ?? '',
-      quantityProducts: int.tryParse(map[paramQuantityProduct] ?? "0") ?? 0,
-      priceItem: double.tryParse(map[paramPriceItem] ?? "0.0") ?? 0.0,
+      quantityProducts: int.tryParse(map[paramQuantityProduct].toString()) ?? 0,
+      priceItem: double.tryParse(map[paramPriceItem].toString()) ?? 0.0,
     );
   }
 

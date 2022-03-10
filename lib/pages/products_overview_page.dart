@@ -42,7 +42,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
     }
   }
 
-  Future<void> _onRefreshProducts() => productsProvider!.loadedProducts();
+  Future<void> _onRefreshProducts() => productsProvider!.refreshProducts();
 
   @override
   Widget build(BuildContext context) {

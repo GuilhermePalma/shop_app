@@ -48,7 +48,7 @@ class Order {
       total: map[paramTotal]?.toDouble() ?? 0.0,
       products:
           List<Cart>.from(map[paramProducts]?.map((x) => Cart.fromMap(x))),
-      date: DateTime(map[paramDate]),
+      date: DateTime.tryParse(map[paramDate]) ?? DateTime.now(),
     );
   }
 

@@ -37,6 +37,12 @@ class ProductsProvider with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Metodo responsavel por Recarregar a Lista de Produtos
+  Future<void> refreshProducts() {
+    _items = [];
+    return loadedProducts();
+  }
+
   /// Adiciona um Product na Lista e na API
   /// Por ser aync, ele obrigatoriamente tem que retornar um Future. Com isso,  a solicitação na
   /// API, retorna um void de Forma Assincrona.
