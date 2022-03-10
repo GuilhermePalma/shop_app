@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/components/custom_drawer.dart';
 import 'package:shop/components/loading_widget.dart';
 import 'package:shop/components/order_item.dart';
+import 'package:shop/models/entities/order.dart';
 import 'package:shop/models/providers/orders_provider.dart';
 import 'package:shop/utils/routes.dart';
 
@@ -43,15 +44,17 @@ class _OrdersPageState extends State<OrdersPage> {
       ),
       drawer: CustomDrawer(namePage: Routes.routeOrders),
       // Exibição do Loading ou do Body Configurado
-      body: _isLoading ? const LoadingWidget() : _body(),
+      body: _isLoading ? const LoadingWidget() : _body(context),
     );
   }
 
   /// Configura o Body da Pagina de Orders.
-  Widget _body() {
+  Widget _body(BuildContext context) {
+    List<Order> listOrders = Provider.of<OrdersProvider>(context).items;
+
     return RefreshIndicator(
       onRefresh: _onRefreshOrders,
-      child: _orderProvider!.itemsCount <= 0
+      child: listOrders.isEmpty
           ? Padding(
               padding: const EdgeInsets.all(8.0),
               child: Column(
@@ -78,9 +81,9 @@ class _OrdersPageState extends State<OrdersPage> {
               ),
             )
           : ListView.builder(
-              itemCount: _orderProvider!.itemsCount,
+              itemCount: listOrders.length,
               itemBuilder: (ctx, index) =>
-                  OrderItem(order: _orderProvider!.items.elementAt(index)),
+                  OrderItem(order: listOrders.elementAt(index)),
             ),
     );
   }
