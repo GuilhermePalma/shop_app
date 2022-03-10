@@ -1,4 +1,7 @@
 import 'dart:convert';
+import 'dart:math';
+
+import 'package:shop/models/entities/product.dart';
 
 class Cart {
   static const String paramID = "id";
@@ -21,6 +24,8 @@ class Cart {
     required this.priceItem,
   });
 
+  /// Metodo que copia e permite alterações nos Atributos do Cart, retornando
+  /// uma nova Instancia de Cart
   Cart copyWith({
     String? id,
     String? productId,
@@ -37,6 +42,7 @@ class Cart {
     );
   }
 
+  /// Metodo que Permite gerar um Map a Partir de um Cart
   Map<String, Object> toMap() {
     return {
       paramProductID: productId,
@@ -46,6 +52,7 @@ class Cart {
     };
   }
 
+  /// Metodo que Retorna uma Instancia de Cart a partir de um Map
   factory Cart.fromMap(Map<String, dynamic> map) {
     return Cart(
       id: map[paramID] ?? '',
@@ -56,10 +63,24 @@ class Cart {
     );
   }
 
+  /// Metodo que Retorna uma Instancia de Cart a partir de um Product
+  factory Cart.fromProduct(Product product) {
+    return Cart(
+      id: Random().nextDouble().toString(),
+      productId: product.id,
+      nameProduct: product.name,
+      quantityProducts: 1,
+      priceItem: product.price,
+    );
+  }
+
+  /// Transfroma um Cart em um Map e Converte em JSON
   String toJson() => json.encode(toMap());
 
+  /// Converte um JSON que está em um Map para um Cart
   factory Cart.fromJson(String source) => Cart.fromMap(json.decode(source));
 
+  /// Metodo Responsavel por Transformar os Dados do Cart em String
   @override
   String toString() {
     return 'Cart(id: $id, productId: $productId, nameProduct: $nameProduct, quantityProducts: $quantityProducts, priceItem: $priceItem)';

@@ -103,8 +103,6 @@ class ProductsProvider with ChangeNotifier {
       _items.insert(indexProduct, product);
       notifyListeners();
     }
-
-    return Future.value();
   }
 
   /// Adiciona um Product à Lista por meio de um Map
