@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/components/cart_item.dart';
+import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/models/providers/cart_provider.dart';
 import 'package:shop/models/providers/orders_provider.dart';
 
@@ -85,16 +86,20 @@ class CartPage extends StatelessWidget {
 
   /// Metodo Responsavel por Tratar o Processo de Finalização da
   /// compra dos Itens do Carrinhi
-  void onClickBuy(
-      BuildContext context, bool _isEmptyCart, CartProvider cartProvider) {
+  void onClickBuy(BuildContext context, bool _isEmptyCart,
+      CartProvider cartProvider) async {
     String textSnackBar;
     if (_isEmptyCart) {
       textSnackBar = 'Não é possivel realizar uma Compra com o Carrinho Vazio';
     } else {
-      Provider.of<OrdersProvider>(context, listen: false)
-          .addOrder(cartProvider);
-      cartProvider.clear();
-      textSnackBar = 'Compra Realizada com Sucesso !';
+      try {
+        await Provider.of<OrdersProvider>(context, listen: false)
+            .addOrder(cartProvider);
+        cartProvider.clear();
+        textSnackBar = 'Compra Realizada com Sucesso !';
+      } on HttpExceptions catch (error) {
+        textSnackBar = error.message;
+      }
     }
 
     // Configura e Exibe a Mensagem do SnackBar
