@@ -30,7 +30,11 @@ class ProductsProvider with ChangeNotifier {
     // Converte o JSON em Map e Obtem os Itens
     Map<String, dynamic> dataJson = jsonDecode(responseAPI.body);
     dataJson.forEach((productId, productData) {
-      _items.add(Product.fromMap(productData).copyWith(id: productId));
+      // Verifica se o Item já está na Lista.
+      int index = _items.indexWhere((prod) => prod.id == productId);
+      if (index == -1) {
+        _items.add(Product.fromMap(productData).copyWith(id: productId));
+      }
     });
     notifyListeners();
   }
