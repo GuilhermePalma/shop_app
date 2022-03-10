@@ -1,15 +1,13 @@
-import 'dart:math';
-
+import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 
 class Product with ChangeNotifier {
-
-  static const paramID = "id";
-  static const paramName= "name";
-  static const paramDescription = "description";
-  static const paramPrice = "price";
-  static const paramImageURL = "imageURL";
+  static const String paramID = "id";
+  static const String paramName = "name";
+  static const String paramDescription = "description";
+  static const String paramPrice = "price";
+  static const String paramImageURL = "imageURL";
+  static const String paramIsFavorite = "isFavorite";
 
   final String id;
   final String name;
@@ -86,9 +84,59 @@ class Product with ChangeNotifier {
     }
   }
 
-  /// Gera um ID utilizando o Nome da Classe, Hora Atual, e um Numero Aleatorio
-  static String get generateIdItem {
-    String dateNowFormated = DateFormat("DDMMy_H_m_s").format(DateTime.now());
-    return "product_" + dateNowFormated + Random().nextInt(3999).toString();
+  /// Metodo que copia e permite alterações nos Atributos do Produto, retornando
+  /// uma nova Instancia de Product
+  Product copyWith({
+    String? id,
+    String? name,
+    String? description,
+    double? price,
+    String? imageURL,
+    bool? isFavorite,
+  }) {
+    return Product(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      description: description ?? this.description,
+      price: price ?? this.price,
+      imageURL: imageURL ?? this.imageURL,
+      isFavorite: isFavorite ?? this.isFavorite,
+    );
   }
+
+  /// Metodo que Permite gerar um Map a Partir de um Product
+  Map<String, dynamic> toMap() {
+    return {
+      if (id.trim().isNotEmpty) paramID: id,
+      paramName: name,
+      paramDescription: description,
+      paramPrice: price,
+      paramImageURL: imageURL,
+      paramIsFavorite: isFavorite,
+    };
+  }
+
+  /// Metodo que Retorna uma Instancia de Product a partir de um Map
+  factory Product.fromMap(Map<String, dynamic> map) {
+    return Product(
+      id: map[paramID] ?? '',
+      name: map[paramName] ?? '',
+      description: map[paramDescription] ?? '',
+      price: double.tryParse(map[paramPrice]?.toString() ?? "0.0") ?? 0.0,
+      imageURL: map[paramImageURL] ?? '',
+      isFavorite: map[paramIsFavorite] ?? false,
+    );
+  }
+
+  /// Transfroma um Product em um Map e Converte em JSON
+  String toJson() => json.encode(toMap());
+
+  /// Converte um JSON que está em um Map para um Product
+  factory Product.fromJson(String source) =>
+      Product.fromMap(json.decode(source));
+
+  /// Metodo Responsavel por Transformar os Dados do Product em String
+  @override
+  String toString() =>
+      'Product(id: $id, name: $name, description: $description, price: $price, imageURL: $imageURL, isFavorite: $isFavorite)';
 }

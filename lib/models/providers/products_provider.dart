@@ -27,17 +27,10 @@ class ProductsProvider with ChangeNotifier {
 
     if (responseAPI.body == 'null') return;
 
+    // Converte o JSON em Map e Obtem os Itens
     Map<String, dynamic> dataJson = jsonDecode(responseAPI.body);
     dataJson.forEach((productId, productData) {
-      _items.add(
-        Product(
-          id: productId,
-          name: productData[Product.paramName],
-          description: productData[Product.paramDescription],
-          price: productData[Product.paramPrice],
-          imageURL: productData[Product.paramImageURL],
-        ),
-      );
+      _items.add(Product.fromMap(productData).copyWith(id: productId));
     });
     notifyListeners();
   }
@@ -49,23 +42,11 @@ class ProductsProvider with ChangeNotifier {
     // await é utilizado em itens marcados como async. Ele espera o Future ser concluido
     final responseAPI = await http.post(
       Uri.parse("$_baseUrlApi/products.json"),
-      body: jsonEncode({
-        Product.paramName: product.name,
-        Product.paramPrice: product.price,
-        Product.paramDescription: product.description,
-        Product.paramImageURL: product.imageURL,
-      }),
+      body: product.copyWith(id: "").toJson(),
     );
 
-    final idForFirebase = jsonDecode(responseAPI.body)["name"];
-    _items.add(Product(
-      id: idForFirebase,
-      name: product.name,
-      description: product.description,
-      price: product.price,
-      imageURL: product.imageURL,
-      isFavorite: product.isFavorite,
-    ));
+    final String idForFirebase = jsonDecode(responseAPI.body)["name"];
+    _items.add(product.copyWith(id: idForFirebase));
     notifyListeners();
   }
 
@@ -101,15 +82,8 @@ class ProductsProvider with ChangeNotifier {
   Future<void> addProductFromData(Map<String, Object> productData) {
     bool hasId = productData.containsKey("id") && productData["id"] != null;
 
-    final Product product = Product(
-      id: hasId
-          ? productData[Product.paramID] as String
-          : Product.generateIdItem,
-      name: productData[Product.paramName] as String,
-      description: productData[Product.paramDescription] as String,
-      price: productData[Product.paramPrice] as double,
-      imageURL: productData[Product.paramImageURL] as String,
-    );
+    // Convert o Map em Product
+    final Product product = Product.fromMap(productData);
 
     // Atualiza ou Insere o Produto
     return hasId ? updateProduct(product) : addProduct(product);
