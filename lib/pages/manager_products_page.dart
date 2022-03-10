@@ -26,16 +26,16 @@ class ManagerProductsPage extends StatelessWidget {
         ],
       ),
       drawer: CustomDrawer(namePage: Routes.routeManagerProducts),
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView.builder(
-          itemCount: productsList.length,
-          itemBuilder: (ctx, index) => Column(
-            children: [
-              ProductItem(product: productsList.elementAt(index)),
-              const Divider(),
-            ],
-          ),
+      body: ListView.builder(
+        itemCount: productsList.length,
+        itemBuilder: (ctx, index) => Column(
+          children: [
+            ProductItem(product: productsList.elementAt(index)),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Divider(),
+            ),
+          ],
         ),
       ),
     );
