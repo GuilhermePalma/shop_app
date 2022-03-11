@@ -34,6 +34,7 @@ class OrdersProvider extends ChangeNotifier {
       throw (HttpExceptions(
         message: "Não foi Possivel Efetuar a Transação",
         statusCode: responseAPI.statusCode,
+        bodyError: responseAPI.body,
       ));
     }
   }

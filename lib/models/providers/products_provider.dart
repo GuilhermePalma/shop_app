@@ -79,6 +79,7 @@ class ProductsProvider with ChangeNotifier {
         throw (HttpExceptions(
           message: "Não foi Possivel Excluir o Produto",
           statusCode: responseAPI.statusCode,
+          bodyError: responseAPI.body,
         ));
       }
     }

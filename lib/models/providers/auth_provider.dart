@@ -6,11 +6,16 @@ import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/utils/urls.dart';
 
 class AuthProvider with ChangeNotifier {
-
-  /// Metodo Responsavel por Cadastrar e Obter o Token do Usuario na API
-  Future<void> singUp(String email, String password) async {
+  /// Metodo Generico Responsavel por Realizar o Cadastro ou Login do Cadastro
+  Future<void> _authUser(
+    String email,
+    String password,
+    String urlTypeAuth,
+  ) async {
     final responseAPI = await http.post(
-      Uri.parse("${Urls.urlSingUp}${Urls.apiKey}"),
+      Uri.parse(
+        "${Urls.urlAuth}$urlTypeAuth${Urls.paramKeyAuth}${Urls.valueApiKey}",
+      ),
       body: jsonEncode({
         "email": email,
         "password": password,
@@ -20,12 +25,18 @@ class AuthProvider with ChangeNotifier {
 
     if (responseAPI.statusCode != 200) {
       throw (HttpExceptions(
-        message: "Não Foi Possivel Cadatrar o Usuario",
+        message: "Não Foi Possivel Autenticar o Usuario",
         statusCode: responseAPI.statusCode,
+        bodyError: responseAPI.body,
       ));
     }
   }
 
+  /// Metodo Responsavel por Cadastrar e Obter o Token do Usuario na API
+  Future<void> singUp(String email, String password) async =>
+      _authUser(email, password, Urls.paramSingUpAuth);
+
   // Metodo Responsavel por realizar o Login e Obter o Token do Usuario na API
-  Future<void> login(String email, String password) async {}
+  Future<void> login(String email, String password) async =>
+      _authUser(email, password, Urls.paramLoginAuth);
 }

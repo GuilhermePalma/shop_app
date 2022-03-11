@@ -50,7 +50,7 @@ class _ButtonCartState extends State<ButtonCart> {
                         setState(() => _isLoading = false);
                         textSnackBar = 'Compra Realizada com Sucesso !';
                       } on HttpExceptions catch (error) {
-                        textSnackBar = error.message;
+                        textSnackBar = error.getMessage;
                       }
                     }
 

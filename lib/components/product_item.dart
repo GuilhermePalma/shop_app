@@ -74,7 +74,7 @@ class ProductItem extends StatelessWidget {
         } on HttpExceptions catch (error) {
           msg.showSnackBar(
             SnackBar(
-              content: Text(error.toString()),
+              content: Text(error.getMessage),
             ),
           );
         }
