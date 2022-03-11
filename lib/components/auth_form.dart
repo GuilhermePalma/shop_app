@@ -1,4 +1,8 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:shop/exceptions/http_exceptions.dart';
+import 'package:shop/models/providers/auth_provider.dart';
 
 enum AuthType { SingUp, Login }
 
@@ -21,25 +25,41 @@ class _AuthFormState extends State<AuthForm> {
     "password": "",
   };
 
+  /// Retorna se o Formulario está configurado para o Login
   bool get _isLogin => _authType == AuthType.Login;
 
+  /// Retorna se o Formulario está configurado para o Cadastro
   bool get _isSingUp => _authType == AuthType.SingUp;
 
+  /// Altera o Tipo do Formulario entre Login e Cadastro
   void _swithAuthType() =>
       setState(() => _authType = _isLogin ? AuthType.SingUp : AuthType.Login);
 
-  void _submit() {
+  /// Metodo Responsavel por Submeter, (Validar e Obter os Dados) do Formualrio
+  void _submit() async {
     final bool isValidForm = _formKey.currentState?.validate() ?? false;
 
-    if (isValidForm) return;
+    if (!isValidForm) return;
 
     setState(() => _isLoading = true);
 
     _formKey.currentState?.save();
 
-    if (_isLogin) {
+    AuthProvider _authProvider = Provider.of(context, listen: false);
+    try {
 
-    } else {}
+      _isLogin
+          ? await _authProvider.login(
+              _authData["email"]!,
+              _authData["password"]!,
+            )
+          : await _authProvider.singUp(
+              _authData["email"]!,
+              _authData["password"]!,
+            );
+    } on HttpExceptions catch (error) {
+      // TODO: Implementar Tratamento de Erro
+    }
 
     setState(() => _isLoading = false);
   }
@@ -68,8 +88,8 @@ class _AuthFormState extends State<AuthForm> {
                   final email = _email ?? "";
                   if (email.trim().isEmpty) {
                     return "O Email Precisa ser Preenchido";
-                  } else if (email.length < 5) {
-                    return "O Email Precisa ter no Minimo 5 Caracteres";
+                  } else if (email.length < 8) {
+                    return "O Email Precisa ter no Minimo 8 Caracteres";
                   } else if (!email.contains("@")) {
                     return "O Email Precisa conter '@'";
                   } else if (email.contains(" ")) {
@@ -89,8 +109,8 @@ class _AuthFormState extends State<AuthForm> {
                   final password = _password ?? "";
                   if (password.trim().isEmpty) {
                     return "A Senha Precisa ser Preenchida";
-                  } else if (password.length < 5) {
-                    return "A Senha Precisa ter no Minimo 5 Caracteres";
+                  } else if (password.length < 8) {
+                    return "A Senha Precisa ter no Minimo 8 Caracteres";
                   } else {
                     return null;
                   }
@@ -113,7 +133,7 @@ class _AuthFormState extends State<AuthForm> {
               _isLoading
                   ? const CircularProgressIndicator()
                   : ElevatedButton(
-                      onPressed: _submit,
+                      onPressed: () => _submit(),
                       child: Text(
                         _isLogin ? "ENTRAR" : "CADASTRAR",
                       ),
