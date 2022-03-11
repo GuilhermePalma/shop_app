@@ -8,6 +8,23 @@ import 'package:shop/utils/urls.dart';
 class AuthProvider with ChangeNotifier {
   static const String paramEmail = "email";
   static const String paramPassword = "password";
+  static const String paramExpirationTime = "expiresIn";
+  static const String paramUID = "localId";
+  static const String paramToken = "idToken";
+
+  String? _token;
+  String? _uid;
+  DateTime? _expirationDate;
+  String? _email;
+
+  bool get isAuth {
+    final isValidDate = _expirationDate?.isAfter(DateTime.now()) ?? false;
+    return _token != null && isValidDate;
+  }
+
+  String? get getToken => isAuth ? _token : null;
+  String? get getUID => isAuth ? _uid : null;
+  String? get getEmail => isAuth ? _email : null;
 
   /// Metodo Generico Responsavel por Realizar o Cadastro ou Login do Cadastro
   Future<void> _authUser(
@@ -28,6 +45,15 @@ class AuthProvider with ChangeNotifier {
 
     if (responseAPI.statusCode != 200) {
       throw (AuthExceptions.fromJSON(responseAPI.body));
+    } else {
+      Map<String, dynamic> jsonData = jsonDecode(responseAPI.body);
+      _token = jsonData[paramToken];
+      _uid = jsonData[paramUID];
+      _expirationDate = DateTime.now().add(
+        Duration(seconds: int.tryParse(jsonData[paramExpirationTime]) ?? 0),
+      );
+      _email = jsonData[paramEmail];
+      notifyListeners();
     }
   }
 

@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/models/providers/auth_provider.dart';
 import 'package:shop/pages/auth_page.dart';
 import 'package:shop/pages/cart_page.dart';
+import 'package:shop/pages/home_page.dart';
 import 'package:shop/pages/manager_products_page.dart';
 import 'package:shop/pages/orders_page.dart';
 import 'package:shop/pages/product_details_page.dart';
@@ -36,15 +37,16 @@ class MyApp extends StatelessWidget {
               .copyWith(secondary: Colors.deepOrange),
         ),
         routes: {
+          Routes.routeHome: (ctx) => const HomePage(),
           Routes.routeAuth: (ctx) => const AuthPage(),
-          Routes.routeHome: (ctx) => const ProductsOverviewPage(),
+          Routes.routeProducts: (ctx) => const ProductsOverviewPage(),
           Routes.routeProductDetails: (ctx) => const ProductDetailsPage(),
           Routes.routeCartPage: (ctx) => const CartPage(),
           Routes.routeOrders: (ctx) => const OrdersPage(),
           Routes.routeManagerProducts: (ctx) => const ManagerProductsPage(),
           Routes.routeProductForm: (ctx) => const ProductFormPage(),
         },
-        initialRoute: Routes.routeAuth,
+        initialRoute: Routes.routeHome,
       ),
     );
   }
