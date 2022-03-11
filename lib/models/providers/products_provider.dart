@@ -67,7 +67,7 @@ class ProductsProvider with ChangeNotifier {
     );
 
     // Verifica se foi bem Sucedido
-    if (responseFavorites.statusCode != 200 ||
+    if (responseFavorites.statusCode != 200 &&
         responseFavorites.body == 'null') {
       throw (HttpExceptions(
         message: "Houve um Erro ao verificar se o Produto é Favorito",
@@ -89,7 +89,6 @@ class ProductsProvider with ChangeNotifier {
         );
       }
     });
-    notifyListeners();
   }
 
   /// Metodo responsavel por Recarregar a Lista de Produtos

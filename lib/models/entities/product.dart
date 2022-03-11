@@ -39,16 +39,15 @@ class Product with ChangeNotifier {
     try {
       _toggleVarFavorite();
 
-      final Uri uriRequest = Uri.parse(
+      final Uri uriRequuest = Uri.parse(
         "${Urls.urFavoriteProducts}/$userUID/$id.json${Urls.paramAuth}$token",
       );
-
       final responseAPI = isFavorite
-          ? await http.post(uriRequest, body: jsonEncode(isFavorite))
-          : await http.delete(uriRequest);
+          ? await http.put(uriRequuest, body: jsonEncode(isFavorite))
+          : await http.delete(uriRequuest);
 
       // Verifica se foi bem Sucedido
-      if (responseAPI.statusCode <= 400) {
+      if (responseAPI.statusCode >= 400) {
         _toggleVarFavorite();
         throw (HttpExceptions(
           message: "Houve um Erro ao Favoritar o Produto",
