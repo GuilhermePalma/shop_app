@@ -23,7 +23,7 @@ class AuthProvider with ChangeNotifier {
   }
 
   String? get getToken => isAuth ? _token : null;
-  String? get getUID => isAuth ? _uid : null;
+  String? get getUserID => isAuth ? _uid : null;
   String? get getEmail => isAuth ? _email : null;
 
   /// Metodo Generico Responsavel por Realizar o Cadastro ou Login do Cadastro

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/models/entities/product.dart';
+import 'package:shop/models/providers/auth_provider.dart';
 import 'package:shop/models/providers/cart_provider.dart';
 import 'package:shop/utils/routes.dart';
 
@@ -51,7 +52,17 @@ class ProductGridItem extends StatelessWidget {
                     ? Theme.of(context).colorScheme.secondary
                     : Colors.white,
               ),
-              onPressed: () => product.toggleFavorite(),
+              onPressed: () {
+                final provider = Provider.of<AuthProvider>(
+                  context,
+                  listen: false,
+                );
+
+                product.toggleFavorite(
+                  provider.getToken ?? "",
+                  provider.getUserID ?? "",
+                );
+              },
             ),
           ),
           trailing: IconButton(

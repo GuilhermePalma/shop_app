@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import 'package:shop/exceptions/http_exceptions.dart';
+import 'package:shop/utils/urls.dart';
 
 class Product with ChangeNotifier {
   static const String paramID = "id";
@@ -26,9 +29,33 @@ class Product with ChangeNotifier {
   });
 
   /// Altera o valor de Favorito do Produto
-  void toggleFavorite() {
+  void _toggleVarFavorite() {
     isFavorite = !isFavorite;
     notifyListeners();
+  }
+
+  Future<void> toggleFavorite(String token, String userUID) async {
+    try {
+      _toggleVarFavorite();
+
+      final responseAPI = await http.put(
+        Uri.parse(
+          "${Urls.urFavoriteProducts}/$userUID/$id.json${Urls.paramAuth}$token",
+        ),
+        body: jsonEncode(isFavorite),
+      );
+
+      // Verifica se foi bem Sucedido
+      if (responseAPI.statusCode <= 400) {
+        _toggleVarFavorite();
+        throw (HttpExceptions(
+          message: "Houve um Erro ao Favoritar o Produto",
+          statusCode: responseAPI.statusCode,
+        ));
+      }
+    } catch (_) {
+      _toggleVarFavorite();
+    }
   }
 
   /// Realiza a Validação do Nome, Retornando a String de Erro ou Nulo

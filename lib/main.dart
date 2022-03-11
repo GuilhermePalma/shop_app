@@ -25,14 +25,15 @@ class MyApp extends StatelessWidget {
       providers: [
         ChangeNotifierProvider(create: (_) => AuthProvider()),
         ChangeNotifierProxyProvider<AuthProvider, ProductsProvider>(
-          create: (_) => ProductsProvider(token: "", listProducts: []),
+          create: (_) => ProductsProvider(),
           update: (ctx, authProvider, previous) => ProductsProvider(
             token: authProvider.getToken ?? "",
             listProducts: previous?.productsList ?? [],
+            userID: authProvider.getUserID ?? "",
           ),
         ),
         ChangeNotifierProxyProvider<AuthProvider, OrdersProvider>(
-          create: (_) => OrdersProvider(token: "", listOrders: []),
+          create: (_) => OrdersProvider(),
           update: (ctx, authProvider, previous) => OrdersProvider(
             token: authProvider.getToken ?? "",
             listOrders: previous?.items ?? [],

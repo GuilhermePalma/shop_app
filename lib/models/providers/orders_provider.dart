@@ -15,8 +15,8 @@ class OrdersProvider extends ChangeNotifier {
   List<Order> _listOrders = [];
 
   OrdersProvider({
-    required String token,
-    required List<Order> listOrders,
+    String token = "",
+    List<Order> listOrders = const [],
   })  : _token = token,
         _listOrders = listOrders;
 

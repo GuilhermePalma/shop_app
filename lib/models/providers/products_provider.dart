@@ -8,42 +8,85 @@ import 'package:shop/utils/urls.dart';
 
 class ProductsProvider with ChangeNotifier {
   final String _token;
-  List<Product> _listProducts = [];
+  final String _userID;
+  List<Product> _listProducts;
 
   ProductsProvider({
-    required String token,
-    required List<Product> listProducts,
+    String token = "",
+    List<Product> listProducts = const [],
+    String userID = "",
   })  : _token = token,
-        _listProducts = listProducts;
+        _listProducts = listProducts,
+        _userID = userID;
 
   /// Retorna um Clone da Lista com os Produtos Salvos
   List<Product> get productsList => [..._listProducts];
 
   /// Retorna os Produtos Favoritos do Usuario
-  List<Product> get productsFavoritesList => [
-        ..._listProducts.where((productItem) => productItem.isFavorite).toList()
-      ];
+  List<Product> get productsFavoritesList =>
+      [..._listProducts.where((product) => product.isFavorite).toList()];
 
   /// Obtem a Quantidade de Itens presentes na Lista
   int get itemsCount => _listProducts.length;
 
   /// Obtem os Produtos Cadastrados na API
   Future<void> loadedProducts() async {
-    final responseAPI = await http.get(
+    final responseProducts = await http.get(
       Uri.parse(
         "${Urls.urlProducts}.json${Urls.paramAuth}$_token",
       ),
     );
 
-    if (responseAPI.body == 'null') return;
+    if (responseProducts.statusCode != 200 || responseProducts.body == 'null') {
+      throw (HttpExceptions(
+        message: "Houve um Erro ao Obter os Produtos",
+        statusCode: responseProducts.statusCode,
+        bodyError: responseProducts.body,
+      ));
+    }
 
     // Converte o JSON em Map e Obtem os Itens
-    Map<String, dynamic> dataJson = jsonDecode(responseAPI.body);
+    Map<String, dynamic> dataJson = jsonDecode(responseProducts.body);
     dataJson.forEach((productId, productData) {
       // Verifica se o Item já está na Lista.
       int index = _listProducts.indexWhere((prod) => prod.id == productId);
       if (index == -1) {
         _listProducts.add(Product.fromMap(productData).copyWith(id: productId));
+      }
+    });
+    syncFavoritesProducts();
+    notifyListeners();
+  }
+
+  /// Metodo Responsavel por Sincronizar e Definir os Produtos Favoritados
+  Future<void> syncFavoritesProducts() async {
+    final responseFavorites = await http.get(
+      Uri.parse(
+        "${Urls.urFavoriteProducts}/$_userID.json${Urls.paramAuth}$_token",
+      ),
+    );
+
+    // Verifica se foi bem Sucedido
+    if (responseFavorites.statusCode != 200 ||
+        responseFavorites.body == 'null') {
+      throw (HttpExceptions(
+        message: "Houve um Erro ao verificar se o Produto é Favorito",
+        statusCode: responseFavorites.statusCode,
+        bodyError: responseFavorites.body,
+      ));
+    }
+
+    Map<String, dynamic> jsonFavorites =
+        jsonDecode(responseFavorites.body) ?? {};
+    jsonFavorites.forEach((idProduct, isFavorite) {
+      int indexItem = _listProducts.indexWhere((prod) => prod.id == idProduct);
+      if (indexItem != -1) {
+        final Product product = _listProducts.elementAt(indexItem);
+        _listProducts.removeAt(indexItem);
+        _listProducts.insert(
+          indexItem,
+          product.copyWith(isFavorite: isFavorite),
+        );
       }
     });
     notifyListeners();
