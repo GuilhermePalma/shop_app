@@ -1,8 +1,6 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/exceptions/auth_exceptions.dart';
-import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/models/providers/auth_provider.dart';
 
 enum AuthType { SingUp, Login }
@@ -16,12 +14,14 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final TextEditingController _passwordController = TextEditingController();
+  final _passwordFocus = FocusNode();
+  final _confirmPasswordFocus = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
   AuthType _authType = AuthType.Login;
 
-  Map<String, String> _authData = {
+  final Map<String, String> _authData = {
     AuthProvider.paramEmail: "",
     AuthProvider.paramPassword: "",
   };
@@ -81,6 +81,13 @@ class _AuthFormState extends State<AuthForm> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+    _passwordFocus.dispose();
+    _confirmPasswordFocus.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final mediaQuery = MediaQuery.of(context).size;
 
@@ -100,6 +107,8 @@ class _AuthFormState extends State<AuthForm> {
               TextFormField(
                 decoration: const InputDecoration(labelText: "E-mail"),
                 keyboardType: TextInputType.emailAddress,
+                onFieldSubmitted: (_) =>
+                    FocusScope.of(context).requestFocus(_passwordFocus),
                 validator: (_email) {
                   final email = _email ?? "";
                   if (email.trim().isEmpty) {
@@ -120,8 +129,15 @@ class _AuthFormState extends State<AuthForm> {
               TextFormField(
                 decoration: const InputDecoration(labelText: "Senha"),
                 keyboardType: TextInputType.text,
+                focusNode: _passwordFocus,
                 obscureText: true,
+                onFieldSubmitted: (_) => _isLogin
+                    ? _submit()
+                    : FocusScope.of(context)
+                        .requestFocus(_confirmPasswordFocus),
                 controller: _passwordController,
+                textInputAction:
+                    _isLogin ? TextInputAction.done : TextInputAction.next,
                 validator: (_password) {
                   final password = _password ?? "";
                   if (password.trim().isEmpty) {
@@ -140,7 +156,10 @@ class _AuthFormState extends State<AuthForm> {
                   decoration:
                       const InputDecoration(labelText: "Confirmar Senha"),
                   keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.done,
+                  focusNode: _confirmPasswordFocus,
                   obscureText: true,
+                  onFieldSubmitted: (_) => _submit(),
                   validator: _isLogin
                       ? null
                       : (_password) => _password != _passwordController.text
