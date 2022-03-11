@@ -82,7 +82,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
           ),
         ],
       ),
-      drawer: CustomDrawer(namePage: Routes.routeMain),
+      drawer: CustomDrawer(namePage: Routes.routeHome),
       body: _isLoading
           ? const LoadingWidget()
           : RefreshIndicator(

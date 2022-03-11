@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/pages/auth_page.dart';
 import 'package:shop/pages/cart_page.dart';
 import 'package:shop/pages/manager_products_page.dart';
 import 'package:shop/pages/orders_page.dart';
@@ -33,14 +34,15 @@ class MyApp extends StatelessWidget {
               .copyWith(secondary: Colors.deepOrange),
         ),
         routes: {
-          Routes.routeMain: (ctx) => const ProductsOverviewPage(),
+          Routes.routeAuth: (ctx) => const AuthPage(),
+          Routes.routeHome: (ctx) => const ProductsOverviewPage(),
           Routes.routeProductDetails: (ctx) => const ProductDetailsPage(),
           Routes.routeCartPage: (ctx) => const CartPage(),
           Routes.routeOrders: (ctx) => const OrdersPage(),
           Routes.routeManagerProducts: (ctx) => const ManagerProductsPage(),
           Routes.routeProductForm: (ctx) => const ProductFormPage(),
         },
-        initialRoute: Routes.routeMain,
+        initialRoute: Routes.routeAuth,
       ),
     );
   }
