@@ -34,16 +34,18 @@ class Product with ChangeNotifier {
     notifyListeners();
   }
 
+  /// Metodo Responsavel por Alterar Controlar a Mudança de Favorito na API
   Future<void> toggleFavorite(String token, String userUID) async {
     try {
       _toggleVarFavorite();
 
-      final responseAPI = await http.put(
-        Uri.parse(
-          "${Urls.urFavoriteProducts}/$userUID/$id.json${Urls.paramAuth}$token",
-        ),
-        body: jsonEncode(isFavorite),
+      final Uri uriRequest = Uri.parse(
+        "${Urls.urFavoriteProducts}/$userUID/$id.json${Urls.paramAuth}$token",
       );
+
+      final responseAPI = isFavorite
+          ? await http.post(uriRequest, body: jsonEncode(isFavorite))
+          : await http.delete(uriRequest);
 
       // Verifica se foi bem Sucedido
       if (responseAPI.statusCode <= 400) {
