@@ -34,7 +34,7 @@ class AuthProvider with ChangeNotifier {
   ) async {
     final responseAPI = await http.post(
       Uri.parse(
-        "${Urls.urlAuth}$urlTypeAuth${Urls.paramKeyAuth}${Urls.valueApiKey}",
+        "${Urls.urlAuth}$urlTypeAuth${Urls.paramKeyAPIAuth}${Urls.valueApiKey}",
       ),
       body: jsonEncode({
         paramEmail: email,

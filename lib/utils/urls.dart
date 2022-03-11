@@ -12,7 +12,8 @@ class Urls {
 
   static const String paramSingUpAuth = "signUp";
   static const String paramLoginAuth = "signInWithPassword";
-  static const String paramKeyAuth = "?key=";
+  static const String paramKeyAPIAuth = "?key=";
+  static const String paramAuth = "?auth=";
 
 
   // TODO: Put Your Firebase API Key in variable "ProtectedConst.apiKey"
