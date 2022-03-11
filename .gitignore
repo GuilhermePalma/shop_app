@@ -46,4 +46,4 @@ app.*.map.json
 /android/app/release
 
 # Sensitive Data Firebase
-lib/utils/protected_const.dart
+# lib/utils/protected_const.dart
