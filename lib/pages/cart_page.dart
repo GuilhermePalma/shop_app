@@ -88,7 +88,7 @@ class CartPage extends StatelessWidget {
         cartProvider.clear();
         textSnackBar = 'Compra Realizada com Sucesso !';
       } on HttpExceptions catch (error) {
-        textSnackBar = error.message;
+        textSnackBar = error.getMessage;
       }
     }
 

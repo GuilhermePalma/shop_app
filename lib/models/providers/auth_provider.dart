@@ -2,10 +2,13 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:shop/exceptions/http_exceptions.dart';
+import 'package:shop/exceptions/auth_exceptions.dart';
 import 'package:shop/utils/urls.dart';
 
 class AuthProvider with ChangeNotifier {
+  static const String paramEmail = "email";
+  static const String paramPassword = "password";
+
   /// Metodo Generico Responsavel por Realizar o Cadastro ou Login do Cadastro
   Future<void> _authUser(
     String email,
@@ -17,18 +20,14 @@ class AuthProvider with ChangeNotifier {
         "${Urls.urlAuth}$urlTypeAuth${Urls.paramKeyAuth}${Urls.valueApiKey}",
       ),
       body: jsonEncode({
-        "email": email,
-        "password": password,
+        paramEmail: email,
+        paramPassword: password,
         "returnSecureToken": true,
       }),
     );
 
     if (responseAPI.statusCode != 200) {
-      throw (HttpExceptions(
-        message: "Não Foi Possivel Autenticar o Usuario",
-        statusCode: responseAPI.statusCode,
-        bodyError: responseAPI.body,
-      ));
+      throw (AuthExceptions.fromJSON(responseAPI.body));
     }
   }
 

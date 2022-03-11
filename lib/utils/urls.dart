@@ -5,10 +5,16 @@ class Urls {
       "https://app-shop-flutter-default-rtdb.firebaseio.com/products";
   static const String urlOrders =
       "https://app-shop-flutter-default-rtdb.firebaseio.com/orders";
-  static const String urlSingUp =
-      "https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=";
+  static const String urlAuth =
+      "https://identitytoolkit.googleapis.com/v1/accounts:";
+  static const String urlLogin =
+      "https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=";
 
-  // TODO: Create a File "protected_const.dart" and Class "ProtectedConst" and
-  // Put Your Firebase API Key in variable "ConstFirebase.apiKey"
-  static const String apiKey = ProtectedConst.apiKey;
+  static const String paramSingUpAuth = "signUp";
+  static const String paramLoginAuth = "signInWithPassword";
+  static const String paramKeyAuth = "?key=";
+
+
+  // TODO: Put Your Firebase API Key in variable "ProtectedConst.apiKey"
+  static const String valueApiKey = ProtectedConst.apiKey;
 }

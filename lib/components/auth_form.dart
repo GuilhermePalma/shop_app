@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/exceptions/auth_exceptions.dart';
 import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/models/providers/auth_provider.dart';
 
@@ -21,8 +22,8 @@ class _AuthFormState extends State<AuthForm> {
   AuthType _authType = AuthType.Login;
 
   Map<String, String> _authData = {
-    "email": "",
-    "password": "",
+    AuthProvider.paramEmail: "",
+    AuthProvider.paramPassword: "",
   };
 
   /// Retorna se o Formulario está configurado para o Login
@@ -47,21 +48,36 @@ class _AuthFormState extends State<AuthForm> {
 
     AuthProvider _authProvider = Provider.of(context, listen: false);
     try {
-
       _isLogin
           ? await _authProvider.login(
-              _authData["email"]!,
-              _authData["password"]!,
+              _authData[AuthProvider.paramEmail]!,
+              _authData[AuthProvider.paramPassword]!,
             )
           : await _authProvider.singUp(
-              _authData["email"]!,
-              _authData["password"]!,
+              _authData[AuthProvider.paramEmail]!,
+              _authData[AuthProvider.paramPassword]!,
             );
-    } on HttpExceptions catch (error) {
-      // TODO: Implementar Tratamento de Erro
+    } on AuthExceptions catch (error) {
+      _showErrorDialog(error.getMessageError);
+    } finally {
+      setState(() => _isLoading = false);
     }
+  }
 
-    setState(() => _isLoading = false);
+  void _showErrorDialog(String massage) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Ocorreu um Erro"),
+        content: Text(massage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
   }
 
   @override
@@ -98,7 +114,8 @@ class _AuthFormState extends State<AuthForm> {
                     return null;
                   }
                 },
-                onSaved: (emailValue) => _authData["email"] = emailValue ?? "",
+                onSaved: (emailValue) =>
+                    _authData[AuthProvider.paramEmail] = emailValue ?? "",
               ),
               TextFormField(
                 decoration: const InputDecoration(labelText: "Senha"),
@@ -115,7 +132,8 @@ class _AuthFormState extends State<AuthForm> {
                     return null;
                   }
                 },
-                onSaved: (password) => _authData["password"] = password ?? "",
+                onSaved: (password) =>
+                    _authData[AuthProvider.paramPassword] = password ?? "",
               ),
               if (_isSingUp)
                 TextFormField(
