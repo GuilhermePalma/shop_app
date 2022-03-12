@@ -45,28 +45,14 @@ class ProductsProvider with ChangeNotifier {
       ));
     }
 
-    // Converte o JSON em Map e Obtem os Itens
-    Map<String, dynamic> dataJson = jsonDecode(responseProducts.body);
-    dataJson.forEach((productId, productData) {
-      // Verifica se o Item já está na Lista.
-      int index = _listProducts.indexWhere((prod) => prod.id == productId);
-      if (index == -1) {
-        _listProducts.add(Product.fromMap(productData).copyWith(id: productId));
-      }
-    });
-    syncFavoritesProducts();
-    notifyListeners();
-  }
-
-  /// Metodo Responsavel por Sincronizar e Definir os Produtos Favoritados
-  Future<void> syncFavoritesProducts() async {
     final responseFavorites = await http.get(
       Uri.parse(
         "${Urls.urFavoriteProducts}/$_userID.json${Urls.paramAuth}$_token",
       ),
     );
 
-    // Verifica se foi bem Sucedido
+    // Obtem a Resposta da Requisição dos Favoritos
+    Map<String, dynamic> jsonFavorites = {};
     if (responseFavorites.statusCode != 200 &&
         responseFavorites.body == 'null') {
       throw (HttpExceptions(
@@ -74,21 +60,25 @@ class ProductsProvider with ChangeNotifier {
         statusCode: responseFavorites.statusCode,
         bodyError: responseFavorites.body,
       ));
+    } else if (responseFavorites.body != 'null') {
+      jsonFavorites = jsonDecode(responseFavorites.body) ?? {};
     }
 
-    Map<String, dynamic> jsonFavorites =
-        jsonDecode(responseFavorites.body) ?? {};
-    jsonFavorites.forEach((idProduct, isFavorite) {
-      int indexItem = _listProducts.indexWhere((prod) => prod.id == idProduct);
-      if (indexItem != -1) {
-        final Product product = _listProducts.elementAt(indexItem);
-        _listProducts.removeAt(indexItem);
-        _listProducts.insert(
-          indexItem,
-          product.copyWith(isFavorite: isFavorite),
-        );
+    // Converte o JSON em Map e Obtem os Itens
+    Map<String, dynamic> dataJson = jsonDecode(responseProducts.body);
+    dataJson.forEach((productId, productData) {
+      bool isFavorite = jsonFavorites[productId] ?? false;
+      // Verifica se o Item já está na Lista.
+      int index = _listProducts.indexWhere((prod) => prod.id == productId);
+      if (index == -1) {
+        _listProducts.add(Product.fromMap(productData).copyWith(
+          id: productId,
+          isFavorite: isFavorite,
+        ));
       }
     });
+
+    notifyListeners();
   }
 
   /// Metodo responsavel por Recarregar a Lista de Produtos

@@ -40,8 +40,8 @@ class ProductGrid extends StatelessWidget {
             ),
             itemBuilder: (ctx, index) {
               /* ChangeNotifierProvider utiliza do Provider já criado para
-            gerenciar Alterações no Product */
-              return ChangeNotifierProvider.value(
+                 gerenciar Alterações no Product */
+              return ChangeNotifierProvider<Product>.value(
                 value: loadedProducts.elementAt(index),
                 // Sem o const no Contrutor para não dar erro na Listagem Dinamica
                 // ignore: prefer_const_constructors
