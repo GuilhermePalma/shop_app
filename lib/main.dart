@@ -37,6 +37,7 @@ class MyApp extends StatelessWidget {
           update: (ctx, authProvider, previous) => OrdersProvider(
             token: authProvider.getToken ?? "",
             listOrders: previous?.items ?? [],
+            userID: authProvider.getUserID ?? "",
           ),
         ),
         ChangeNotifierProvider(create: (_) => CartProvider()),

@@ -11,13 +11,18 @@ class OrdersProvider extends ChangeNotifier {
   /// Token Usado nas Requisições
   final String _token;
 
+  /// ID do Usuario
+  final String _userID;
+
   /// Lista que armazena as Orders
   List<Order> _listOrders = [];
 
   OrdersProvider({
     String token = "",
     List<Order> listOrders = const [],
+    userID = "",
   })  : _token = token,
+        _userID = userID,
         _listOrders = listOrders;
 
   /// Retorna a Lista de Order
@@ -32,7 +37,7 @@ class OrdersProvider extends ChangeNotifier {
 
     final responseAPI = await http.post(
       Uri.parse(
-        "${Urls.urlOrders}.json${Urls.paramAuth}$_token",
+        "${Urls.urlOrders}/$_userID.json${Urls.paramAuth}$_token",
       ),
       body: order.toJson(),
     );
@@ -51,17 +56,22 @@ class OrdersProvider extends ChangeNotifier {
     }
   }
 
-  /// Metodo responsavel por obter as Orders da API
+  /// Metodo responsavel por obter as Orders do Usuario da API
   Future<void> loadedOrders() async {
     final responseAPI = await http.get(
       Uri.parse(
-        "${Urls.urlOrders}.json${Urls.paramAuth}$_token",
+        "${Urls.urlOrders}/$_userID.json${Urls.paramAuth}$_token",
       ),
     );
 
-    if (responseAPI.statusCode < 400 && responseAPI.body != "null") {
+    if (responseAPI.statusCode >= 400) {
+      throw (HttpExceptions(
+        message: "Não foi Possivel Obter as Transações",
+        statusCode: responseAPI.statusCode,
+      ));
+    } else {
       List<Order> listOrders = [];
-      Map<String, dynamic> dataJson = jsonDecode(responseAPI.body);
+      Map<String, dynamic> dataJson = jsonDecode(responseAPI.body) ?? {};
       dataJson.forEach((id, valueOrder) {
         listOrders.add(Order.fromMap(valueOrder).copyWith(id: id));
       });
@@ -69,11 +79,6 @@ class OrdersProvider extends ChangeNotifier {
       // Mantem sempre o Item mais Atual na Parte Superior
       _listOrders = listOrders.reversed.toList();
       notifyListeners();
-    } else {
-      throw (HttpExceptions(
-        message: "Não foi Possivel Obter as Transações",
-        statusCode: responseAPI.statusCode,
-      ));
     }
   }
 
