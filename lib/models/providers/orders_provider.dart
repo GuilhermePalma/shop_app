@@ -69,6 +69,9 @@ class OrdersProvider extends ChangeNotifier {
         message: "Não foi Possivel Obter as Transações",
         statusCode: responseAPI.statusCode,
       ));
+    } else if (responseAPI.body == "null") {
+      _listOrders = [];
+      notifyListeners();
     } else {
       List<Order> listOrders = [];
       Map<String, dynamic> dataJson = jsonDecode(responseAPI.body) ?? {};

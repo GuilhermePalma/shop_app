@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/components/loading_widget.dart';
+import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/models/entities/product.dart';
 import 'package:shop/models/providers/products_provider.dart';
 
@@ -78,14 +79,12 @@ class _ProductFormPageState extends State<ProductFormPage> {
         await Provider.of<ProductsProvider>(context, listen: false)
             .addProductFromData(_formData);
         Navigator.of(context).pop();
-      } catch (error) {
+      } on HttpExceptions catch (error) {
         showDialog(
           context: context,
           builder: (ctx) => AlertDialog(
             title: const Text("Ocorreu um Erro"),
-            content: const Text(
-              "Houve um Erro ao Salvar o Produto. Tente Novamente",
-            ),
+            content: Text(error.message),
             actions: [
               TextButton(
                 onPressed: () => Navigator.of(context).pop,

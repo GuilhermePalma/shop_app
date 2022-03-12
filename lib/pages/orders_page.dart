@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/components/custom_drawer.dart';
 import 'package:shop/components/loading_widget.dart';
 import 'package:shop/components/order_item.dart';
+import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/models/entities/order.dart';
 import 'package:shop/models/providers/orders_provider.dart';
 import 'package:shop/utils/routes.dart';
@@ -25,16 +26,43 @@ class _OrdersPageState extends State<OrdersPage> {
     _orderProvider = Provider.of<OrdersProvider>(context, listen: false);
 
     if (_orderProvider!.itemsCount <= 0) {
-      _orderProvider!
-          .loadedOrders()
-          .then((_) => setState(() => _isLoading = false));
+      try {
+        _orderProvider!
+            .loadedOrders()
+            .then((_) => setState(() => _isLoading = false));
+      } on HttpExceptions catch (error) {
+        _showErrorDialog(error.message);
+      }
     } else {
       setState(() => _isLoading = false);
     }
   }
 
+  /// Metodo Responsavel por Exibir um AlertDialog de Erro
+  void _showErrorDialog(String massage) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Ocorreu um Erro"),
+        content: Text(massage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
   /// Metodo de Recarregar as Orders
-  Future<void> _onRefreshOrders() => _orderProvider!.refreshOrders();
+  Future<void> _onRefreshOrders() async{
+    try {
+       _orderProvider!.refreshOrders();
+    } on HttpExceptions catch (error) {
+      _showErrorDialog(error.message);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {

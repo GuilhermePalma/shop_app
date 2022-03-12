@@ -4,6 +4,7 @@ import 'package:shop/components/badge.dart';
 import 'package:shop/components/custom_drawer.dart';
 import 'package:shop/components/loading_widget.dart';
 import 'package:shop/components/product_grid.dart';
+import 'package:shop/exceptions/http_exceptions.dart';
 import 'package:shop/models/providers/cart_provider.dart';
 import 'package:shop/models/providers/products_provider.dart';
 import 'package:shop/utils/routes.dart';
@@ -42,7 +43,31 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
     }
   }
 
-  Future<void> _onRefreshProducts() => productsProvider!.refreshProducts();
+  /// Metodo Responsavel por Exibir um AlertDialog de Erro
+  void _showErrorDialog(String massage) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text("Ocorreu um Erro"),
+        content: Text(massage),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: const Text("OK"),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Metodo Responsavel por Sinctronizar as Transações
+  Future<void> _onRefreshProducts(BuildContext context) async {
+    try {
+      productsProvider!.refreshProducts();
+    } on HttpExceptions catch (error) {
+      _showErrorDialog(error.message);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -86,7 +111,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
       body: _isLoading
           ? const LoadingWidget()
           : RefreshIndicator(
-              onRefresh: _onRefreshProducts,
+              onRefresh: () => _onRefreshProducts(context),
               child: ProductGrid(showFavoriteOnly: _showFavoritesOnly),
             ),
     );

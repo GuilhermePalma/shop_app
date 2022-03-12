@@ -99,6 +99,14 @@ class ProductsProvider with ChangeNotifier {
       body: product.copyWith(id: "").toJson(),
     );
 
+    if (responseAPI.statusCode != 200 || responseAPI.body == "null") {
+      throw (HttpExceptions(
+        message: "Ocorreu um Item ao Salvar o Produto",
+        statusCode: responseAPI.statusCode,
+        bodyError: responseAPI.body,
+      ));
+    }
+
     final String idForFirebase = jsonDecode(responseAPI.body)["name"];
     _listProducts.add(product.copyWith(id: idForFirebase));
     notifyListeners();
