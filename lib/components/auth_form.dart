@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:shop/exceptions/auth_exceptions.dart';
 import 'package:shop/models/providers/auth_provider.dart';
 
-enum AuthType { SingUp, Login }
+enum AuthType { singUp, login }
 
 class AuthForm extends StatefulWidget {
   const AuthForm({Key? key}) : super(key: key);
@@ -12,29 +12,52 @@ class AuthForm extends StatefulWidget {
   State<AuthForm> createState() => _AuthFormState();
 }
 
-class _AuthFormState extends State<AuthForm> {
+class _AuthFormState extends State<AuthForm>
+    with SingleTickerProviderStateMixin {
   final TextEditingController _passwordController = TextEditingController();
   final FocusNode _passwordFocus = FocusNode();
   final FocusNode _confirmPasswordFocus = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  AuthType _authType = AuthType.login;
   bool _isLoading = false;
 
-  AuthType _authType = AuthType.Login;
+  AnimationController? _animationController;
+  Animation<double>? _opacityAnimation;
+  @override
+  void initState() {
+    super.initState();
+    _animationController = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 700),
+    );
 
+    _opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
+      CurvedAnimation(
+        parent: _animationController!,
+        curve: Curves.linear,
+      ),
+    );
+  }
+
+  /// Map Contendo os Valores de Login/Cadastro
   final Map<String, String> _authData = {
     AuthProvider.paramEmail: "",
     AuthProvider.paramPassword: "",
   };
 
-  /// Retorna se o Formulario está configurado para o Login
-  bool get _isLogin => _authType == AuthType.Login;
+  /// Retorna se o Formulario está configurado para o login
+  bool get _isLogin => _authType == AuthType.login;
 
-  /// Retorna se o Formulario está configurado para o Cadastro
-  bool get _isSingUp => _authType == AuthType.SingUp;
-
-  /// Altera o Tipo do Formulario entre Login e Cadastro
-  void _swithAuthType() =>
-      setState(() => _authType = _isLogin ? AuthType.SingUp : AuthType.Login);
+  /// Altera o Tipo do Formulario entre login e Cadastro
+  void _swithAuthType() => setState(() {
+        if (_isLogin) {
+          _authType = AuthType.singUp;
+          _animationController?.forward();
+        } else {
+          _authType = AuthType.login;
+          _animationController?.reverse();
+        }
+      });
 
   /// Metodo Responsavel por Submeter, (Validar e Obter os Dados) do Formualrio
   void _submit() async {
@@ -89,7 +112,7 @@ class _AuthFormState extends State<AuthForm> {
 
   @override
   Widget build(BuildContext context) {
-    final mediaQuery = MediaQuery.of(context).size;
+    final _mediaQuerySize = MediaQuery.of(context).size;
 
     return Card(
       elevation: 8,
@@ -98,94 +121,109 @@ class _AuthFormState extends State<AuthForm> {
       ),
       child: Container(
         padding: const EdgeInsets.all(16),
-        width: mediaQuery.width * 0.85,
+        width: _mediaQuerySize.width * 0.85,
         child: Form(
           key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "E-mail",
-                  border: OutlineInputBorder(),
+          child: AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.linear,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: "E-mail",
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.emailAddress,
+                  onFieldSubmitted: (_) =>
+                      FocusScope.of(context).requestFocus(_passwordFocus),
+                  validator: _isValidEmail,
+                  onSaved: (emailValue) =>
+                      _authData[AuthProvider.paramEmail] = emailValue ?? "",
                 ),
-                keyboardType: TextInputType.emailAddress,
-                onFieldSubmitted: (_) =>
-                    FocusScope.of(context).requestFocus(_passwordFocus),
-                validator: _isValidEmail,
-                onSaved: (emailValue) =>
-                    _authData[AuthProvider.paramEmail] = emailValue ?? "",
-              ),
-              const SizedBox(height: 15),
-              TextFormField(
-                decoration: const InputDecoration(
-                  labelText: "Senha",
-                  border: OutlineInputBorder(),
+                const SizedBox(height: 15),
+                TextFormField(
+                  decoration: const InputDecoration(
+                    labelText: "Senha",
+                    border: OutlineInputBorder(),
+                  ),
+                  keyboardType: TextInputType.text,
+                  focusNode: _passwordFocus,
+                  obscureText: true,
+                  onFieldSubmitted: (_) => _isLogin
+                      ? _submit()
+                      : FocusScope.of(context)
+                          .requestFocus(_confirmPasswordFocus),
+                  controller: _passwordController,
+                  textInputAction:
+                      _isLogin ? TextInputAction.done : TextInputAction.next,
+                  validator: _isValidPassword,
+                  onSaved: (password) =>
+                      _authData[AuthProvider.paramPassword] = password ?? "",
                 ),
-                keyboardType: TextInputType.text,
-                focusNode: _passwordFocus,
-                obscureText: true,
-                onFieldSubmitted: (_) => _isLogin
-                    ? _submit()
-                    : FocusScope.of(context)
-                        .requestFocus(_confirmPasswordFocus),
-                controller: _passwordController,
-                textInputAction:
-                    _isLogin ? TextInputAction.done : TextInputAction.next,
-                validator: _isValidPassword,
-                onSaved: (password) =>
-                    _authData[AuthProvider.paramPassword] = password ?? "",
-              ),
-              if (_isSingUp)
-                Padding(
-                  padding: const EdgeInsets.only(top: 15.0),
-                  child: TextFormField(
-                    decoration: const InputDecoration(
-                      labelText: "Confirmar Senha",
-                      border: OutlineInputBorder(),
+                AnimatedContainer(
+                  constraints: BoxConstraints(
+                    minHeight: _isLogin ? 0 : 60,
+                    maxHeight: _isLogin ? 0 : 120,
+                  ),
+                  duration: const Duration(milliseconds: 300),
+                  curve: Curves.linear,
+                  child: FadeTransition(
+                    opacity: _opacityAnimation!,
+                    child: Padding(
+                      padding: const EdgeInsets.only(top: 15.0),
+                      child: TextFormField(
+                        decoration: const InputDecoration(
+                          labelText: "Confirmar Senha",
+                          border: OutlineInputBorder(),
+                        ),
+                        keyboardType: TextInputType.text,
+                        textInputAction: TextInputAction.done,
+                        focusNode: _confirmPasswordFocus,
+                        obscureText: true,
+                        onFieldSubmitted: (_) => _submit(),
+                        validator: _isLogin
+                            ? null
+                            : (_password) =>
+                                _password != _passwordController.text
+                                    ? "A Senhas não são Iguais"
+                                    : null,
+                      ),
                     ),
-                    keyboardType: TextInputType.text,
-                    textInputAction: TextInputAction.done,
-                    focusNode: _confirmPasswordFocus,
-                    obscureText: true,
-                    onFieldSubmitted: (_) => _submit(),
-                    validator: _isLogin
-                        ? null
-                        : (_password) => _password != _passwordController.text
-                            ? "A Senhas não são Iguais"
-                            : null,
                   ),
                 ),
-              const SizedBox(height: 8),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : SizedBox(
-                      width: double.infinity,
-                      child: ElevatedButton(
-                        onPressed: () => _submit(),
-                        child: Text(
-                          _isLogin ? "ENTRAR" : "CADASTRAR",
-                          style: const TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        style: ElevatedButton.styleFrom(
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(30),
+                const SizedBox(height: 8),
+                _isLoading
+                    ? const CircularProgressIndicator()
+                    : SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () => _submit(),
+                          child: Text(
+                            _isLogin ? "ENTRAR" : "CADASTRAR",
+                            style: const TextStyle(fontWeight: FontWeight.bold),
                           ),
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 30,
-                            vertical: 8,
+                          style: ElevatedButton.styleFrom(
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(30),
+                            ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 30,
+                              vertical: 8,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-              const SizedBox(height: 15),
-              TextButton(
-                child: Text(
-                  _isLogin ? "Realizar Cadastro" : "Realizar Login",
+                const SizedBox(height: 15),
+                TextButton(
+                  child: Text(
+                    _isLogin ? "Realizar Cadastro" : "Realizar login",
+                  ),
+                  onPressed: _swithAuthType,
                 ),
-                onPressed: _swithAuthType,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
