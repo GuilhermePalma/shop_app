@@ -27,12 +27,17 @@ class ProductGridItem extends StatelessWidget {
             Routes.routeProductDetails,
             arguments: product,
           ),
-          child: Image.network(
-            product.imageURL,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return Image.asset("assets/images/error_404.jpg");
-            },
+          child: Hero(
+            tag: product.id,
+            child: FadeInImage(
+              placeholder: const AssetImage(
+                "assets/images/product-placeholder.png",
+              ),
+              image: NetworkImage(product.imageURL),
+              fit: BoxFit.cover,
+              imageErrorBuilder: (ctx, obj, error) =>
+                  Image.asset("assets/images/error_404.jpg"),
+            ),
           ),
         ),
         footer: GridTileBar(

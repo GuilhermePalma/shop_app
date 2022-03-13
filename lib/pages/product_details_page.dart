@@ -18,7 +18,10 @@ class ProductDetailsPage extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               height: 300,
-              child: Image.network(product.imageURL, fit: BoxFit.cover),
+              child: Hero(
+                tag: product.id,
+                child: Image.network(product.imageURL, fit: BoxFit.cover),
+              ),
             ),
             const SizedBox(height: 10),
             Text(
