@@ -14,8 +14,8 @@ class AuthForm extends StatefulWidget {
 
 class _AuthFormState extends State<AuthForm> {
   final TextEditingController _passwordController = TextEditingController();
-  final _passwordFocus = FocusNode();
-  final _confirmPasswordFocus = FocusNode();
+  final FocusNode _passwordFocus = FocusNode();
+  final FocusNode _confirmPasswordFocus = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
 
@@ -112,20 +112,7 @@ class _AuthFormState extends State<AuthForm> {
                 keyboardType: TextInputType.emailAddress,
                 onFieldSubmitted: (_) =>
                     FocusScope.of(context).requestFocus(_passwordFocus),
-                validator: (_email) {
-                  final email = _email ?? "";
-                  if (email.trim().isEmpty) {
-                    return "O Email Precisa ser Preenchido";
-                  } else if (email.length < 8) {
-                    return "O Email Precisa ter no Minimo 8 Caracteres";
-                  } else if (!email.contains("@")) {
-                    return "O Email Precisa conter '@'";
-                  } else if (email.contains(" ")) {
-                    return "O Email não pode conter Espaços em Branco";
-                  } else {
-                    return null;
-                  }
-                },
+                validator: _isValidEmail,
                 onSaved: (emailValue) =>
                     _authData[AuthProvider.paramEmail] = emailValue ?? "",
               ),
@@ -145,16 +132,7 @@ class _AuthFormState extends State<AuthForm> {
                 controller: _passwordController,
                 textInputAction:
                     _isLogin ? TextInputAction.done : TextInputAction.next,
-                validator: (_password) {
-                  final password = _password ?? "";
-                  if (password.trim().isEmpty) {
-                    return "A Senha Precisa ser Preenchida";
-                  } else if (password.length < 8) {
-                    return "A Senha Precisa ter no Minimo 8 Caracteres";
-                  } else {
-                    return null;
-                  }
-                },
+                validator: _isValidPassword,
                 onSaved: (password) =>
                     _authData[AuthProvider.paramPassword] = password ?? "",
               ),
@@ -212,5 +190,33 @@ class _AuthFormState extends State<AuthForm> {
         ),
       ),
     );
+  }
+
+  /// Metodo Responsavel por Validar o Email conforme os Requisitos
+  String? _isValidEmail(String? _email) {
+    final email = _email ?? "";
+    if (email.trim().isEmpty) {
+      return "O Email Precisa ser Preenchido";
+    } else if (email.length < 8) {
+      return "O Email Precisa ter no Minimo 8 Caracteres";
+    } else if (!email.contains("@")) {
+      return "O Email Precisa conter '@'";
+    } else if (email.contains(" ")) {
+      return "O Email não pode conter Espaços em Branco";
+    } else {
+      return null;
+    }
+  }
+
+  /// Metodo Responsavel por Validar a Senha conforme os Requisitos
+  String? _isValidPassword(String? _password) {
+    final password = _password ?? "";
+    if (password.trim().isEmpty) {
+      return "A Senha Precisa ser Preenchida";
+    } else if (password.length < 8) {
+      return "A Senha Precisa ter no Minimo 8 Caracteres";
+    } else {
+      return null;
+    }
   }
 }
