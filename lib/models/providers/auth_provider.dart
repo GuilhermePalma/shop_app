@@ -64,4 +64,13 @@ class AuthProvider with ChangeNotifier {
   // Metodo Responsavel por realizar o Login e Obter o Token do Usuario na API
   Future<void> login(String email, String password) async =>
       _authUser(email, password, Urls.paramLoginAuth);
+
+  /// Metodo Responsavel por Fazer o Logout do Usuario
+  void logoutUser() {
+    _token = null;
+    _uid = null;
+    _expirationDate = null;
+    _email = null;
+    notifyListeners();
+  }
 }
