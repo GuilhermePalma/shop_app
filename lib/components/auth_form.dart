@@ -98,14 +98,17 @@ class _AuthFormState extends State<AuthForm> {
       ),
       child: Container(
         padding: const EdgeInsets.all(16),
-        height: _isLogin ? 310 : 400,
-        width: mediaQuery.width * 0.75,
+        width: mediaQuery.width * 0.85,
         child: Form(
           key: _formKey,
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
               TextFormField(
-                decoration: const InputDecoration(labelText: "E-mail"),
+                decoration: const InputDecoration(
+                  labelText: "E-mail",
+                  border: OutlineInputBorder(),
+                ),
                 keyboardType: TextInputType.emailAddress,
                 onFieldSubmitted: (_) =>
                     FocusScope.of(context).requestFocus(_passwordFocus),
@@ -126,8 +129,12 @@ class _AuthFormState extends State<AuthForm> {
                 onSaved: (emailValue) =>
                     _authData[AuthProvider.paramEmail] = emailValue ?? "",
               ),
+              const SizedBox(height: 15),
               TextFormField(
-                decoration: const InputDecoration(labelText: "Senha"),
+                decoration: const InputDecoration(
+                  labelText: "Senha",
+                  border: OutlineInputBorder(),
+                ),
                 keyboardType: TextInputType.text,
                 focusNode: _passwordFocus,
                 obscureText: true,
@@ -152,45 +159,54 @@ class _AuthFormState extends State<AuthForm> {
                     _authData[AuthProvider.paramPassword] = password ?? "",
               ),
               if (_isSingUp)
-                TextFormField(
-                  decoration:
-                      const InputDecoration(labelText: "Confirmar Senha"),
-                  keyboardType: TextInputType.text,
-                  textInputAction: TextInputAction.done,
-                  focusNode: _confirmPasswordFocus,
-                  obscureText: true,
-                  onFieldSubmitted: (_) => _submit(),
-                  validator: _isLogin
-                      ? null
-                      : (_password) => _password != _passwordController.text
-                          ? "A Senhas não são Iguais"
-                          : null,
+                Padding(
+                  padding: const EdgeInsets.only(top: 15.0),
+                  child: TextFormField(
+                    decoration: const InputDecoration(
+                      labelText: "Confirmar Senha",
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.text,
+                    textInputAction: TextInputAction.done,
+                    focusNode: _confirmPasswordFocus,
+                    obscureText: true,
+                    onFieldSubmitted: (_) => _submit(),
+                    validator: _isLogin
+                        ? null
+                        : (_password) => _password != _passwordController.text
+                            ? "A Senhas não são Iguais"
+                            : null,
+                  ),
                 ),
-              const SizedBox(height: 20),
+              const SizedBox(height: 8),
               _isLoading
                   ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: () => _submit(),
-                      child: Text(
-                        _isLogin ? "ENTRAR" : "CADASTRAR",
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(30),
+                  : SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () => _submit(),
+                        child: Text(
+                          _isLogin ? "ENTRAR" : "CADASTRAR",
+                          style: const TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 30,
-                          vertical: 8,
+                        style: ElevatedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(30),
+                          ),
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 30,
+                            vertical: 8,
+                          ),
                         ),
                       ),
                     ),
-              const Spacer(),
+              const SizedBox(height: 15),
               TextButton(
                 child: Text(
                   _isLogin ? "Realizar Cadastro" : "Realizar Login",
                 ),
                 onPressed: _swithAuthType,
-              )
+              ),
             ],
           ),
         ),
