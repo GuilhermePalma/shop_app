@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop/exceptions/auth_exceptions.dart';
+import 'package:shop/models/entities/store.dart';
 import 'package:shop/utils/urls.dart';
 
 class AuthProvider with ChangeNotifier {
@@ -53,8 +54,38 @@ class AuthProvider with ChangeNotifier {
         Duration(seconds: int.tryParse(jsonData[paramExpirationTime]) ?? 0),
       );
       _email = jsonData[paramEmail];
+
+      // Armazena os Dados em SharedPreferences
+      Store.saveMap(
+        Store.keyUserData,
+        {
+          paramToken: _token,
+          paramEmail: _email,
+          paramUID: _uid,
+          paramExpirationTime: _expirationDate!.toIso8601String(),
+        },
+      );
+
       notifyListeners();
     }
+  }
+
+  /// Metodo Responsavel por Tentar Autenticar o Usuario com as Informações Salvas
+  Future<void> tryAutoLogin() async {
+    if (isAuth) return;
+
+    final userData = await Store.getMap(Store.keyUserData);
+    if (userData.isEmpty) return;
+
+    final expireDate = DateTime.parse(userData[paramExpirationTime]);
+    if (expireDate.isBefore(DateTime.now())) return;
+
+    _token = userData[paramToken];
+    _email = userData[paramEmail];
+    _uid = userData[paramUID];
+    _expirationDate = expireDate;
+
+    notifyListeners();
   }
 
   /// Metodo Responsavel por Cadastrar e Obter o Token do Usuario na API
@@ -71,6 +102,8 @@ class AuthProvider with ChangeNotifier {
     _uid = null;
     _expirationDate = null;
     _email = null;
-    notifyListeners();
+
+    // Limpa as SharedPreferences e Notifica as Alterações para o APP
+    Store.removeItem(Store.keyUserData).then((_) => notifyListeners());
   }
 }
