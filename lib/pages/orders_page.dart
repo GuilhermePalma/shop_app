@@ -56,9 +56,9 @@ class _OrdersPageState extends State<OrdersPage> {
   }
 
   /// Metodo de Recarregar as Orders
-  Future<void> _onRefreshOrders() async{
+  Future<void> _onRefreshOrders() async {
     try {
-       _orderProvider!.refreshOrders();
+      _orderProvider!.refreshOrders();
     } on HttpExceptions catch (error) {
       _showErrorDialog(error.message);
     }
@@ -70,7 +70,7 @@ class _OrdersPageState extends State<OrdersPage> {
       appBar: AppBar(
         title: const Text("Meus Pedidos"),
       ),
-      drawer: CustomDrawer(namePage: Routes.routeOrders),
+      drawer: const CustomDrawer(namePage: Routes.routeOrders),
       // Exibição do Loading ou do Body Configurado
       body: _isLoading ? const LoadingWidget() : _body(context),
     );

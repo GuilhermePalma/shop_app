@@ -52,7 +52,7 @@ class ManagerProductsPage extends StatelessWidget {
           ),
         ],
       ),
-      drawer: CustomDrawer(namePage: Routes.routeManagerProducts),
+      drawer: const CustomDrawer(namePage: Routes.routeManagerProducts),
       body: RefreshIndicator(
         onRefresh: () => _onRefreshProducts(context),
         child: ListView.builder(
