@@ -34,7 +34,7 @@ class ProductGrid extends StatelessWidget {
             padding: const EdgeInsets.all(10.0),
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, // Elementos por Linha
-              childAspectRatio: 3 / 2, // Relação Entra Altura e Largura
+              childAspectRatio: 1 / 1.5, // Relação Entra Altura e Largura
               crossAxisSpacing: 10, // Espaço entre os Elementos (Horizontal -)
               mainAxisSpacing: 10, // Espaço entre os Elementos (Vertical |)
             ),
