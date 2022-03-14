@@ -7,6 +7,8 @@ class Urls {
       "https://app-shop-flutter-default-rtdb.firebaseio.com/orders";
   static const String urlAuth =
       "https://identitytoolkit.googleapis.com/v1/accounts:";
+  static const String urlRefreshToken =
+      "https://securetoken.googleapis.com/v1/token";
   static const String urFavoriteProducts =
       "https://app-shop-flutter-default-rtdb.firebaseio.com/favorites_products";
 

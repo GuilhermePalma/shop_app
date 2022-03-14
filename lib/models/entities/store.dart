@@ -6,6 +6,9 @@ class Store {
   /// Chave Utilizada para Salvar Informações do Usuario
   static const String keyUserData = "userData";
 
+  /// Chave Utilizada para Salvar o Refresh Token
+  static const String keyRefreshToken = "refreshToken";
+
   /// Metodo Responsavel por Armazenar Strings nas SharedPreferences
   static Future<bool> saveString(String key, String value) async {
     final preferences = await SharedPreferences.getInstance();

@@ -12,11 +12,13 @@ class AuthProvider with ChangeNotifier {
   static const String paramExpirationTime = "expiresIn";
   static const String paramUID = "localId";
   static const String paramToken = "idToken";
+  static const String paramRefreshToken = "refreshToken";
 
   String? _token;
   String? _uid;
   DateTime? _expirationDate;
   String? _email;
+  String? _refreshToken;
 
   bool get isAuth {
     final isValidDate = _expirationDate?.isAfter(DateTime.now()) ?? false;
@@ -28,11 +30,8 @@ class AuthProvider with ChangeNotifier {
   String? get getEmail => isAuth ? _email : null;
 
   /// Metodo Generico Responsavel por Realizar o Cadastro ou Login do Cadastro
-  Future<void> _authUser(
-    String email,
-    String password,
-    String urlTypeAuth,
-  ) async {
+  Future<void> _authUser(String email, String password, String urlTypeAuth,
+      bool rememberLogin) async {
     final responseAPI = await http.post(
       Uri.parse(
         "${Urls.urlAuth}$urlTypeAuth${Urls.paramKeyAPIAuth}${Urls.valueApiKey}",
@@ -54,6 +53,7 @@ class AuthProvider with ChangeNotifier {
         Duration(seconds: int.tryParse(jsonData[paramExpirationTime]) ?? 0),
       );
       _email = jsonData[paramEmail];
+      _refreshToken = rememberLogin ? jsonData[paramRefreshToken] : "";
 
       // Armazena os Dados em SharedPreferences
       Store.saveMap(
@@ -66,6 +66,7 @@ class AuthProvider with ChangeNotifier {
         },
       );
 
+      if (rememberLogin) Store.saveString(paramRefreshToken, _refreshToken!);
       notifyListeners();
     }
   }
@@ -78,23 +79,51 @@ class AuthProvider with ChangeNotifier {
     if (userData.isEmpty) return;
 
     final expireDate = DateTime.parse(userData[paramExpirationTime]);
-    if (expireDate.isBefore(DateTime.now())) return;
+    if (expireDate.isBefore(DateTime.now())) {
+      // Obtem o Refresh Token
+      final refreshToken = await Store.getString(Store.keyRefreshToken);
+      if (refreshToken.isEmpty) return;
 
-    _token = userData[paramToken];
+      final responseAPI = await http.post(
+        Uri.parse(
+          "${Urls.urlRefreshToken}${Urls.paramKeyAPIAuth}${Urls.valueApiKey}",
+        ),
+        body: jsonEncode({
+          "grant_type": "refresh_token",
+          "refresh_token": refreshToken,
+        }),
+      );
+
+      if (responseAPI.statusCode != 200 || responseAPI.body == "null") return;
+      final Map<String, dynamic> newDataUser = jsonDecode(responseAPI.body);
+
+      _token = newDataUser["id_token"];
+      _email = newDataUser[paramEmail];
+      _uid = newDataUser["user_id"];
+      _expirationDate = DateTime.now().add(
+        Duration(seconds: int.tryParse(newDataUser["expires_in"]) ?? 0),
+      );
+      _refreshToken = newDataUser["refresh_token"];
+    } else {
+      _token = userData[paramToken];
+      _uid = userData[paramUID];
+      _expirationDate = expireDate;
+      _refreshToken = await Store.getString(Store.keyRefreshToken);
+    }
+
     _email = userData[paramEmail];
-    _uid = userData[paramUID];
-    _expirationDate = expireDate;
-
     notifyListeners();
   }
 
   /// Metodo Responsavel por Cadastrar e Obter o Token do Usuario na API
-  Future<void> singUp(String email, String password) async =>
-      _authUser(email, password, Urls.paramSingUpAuth);
+  Future<void> singUp(String email, String password,
+          [bool rememberLogin = false]) async =>
+      _authUser(email, password, Urls.paramSingUpAuth, rememberLogin);
 
   // Metodo Responsavel por realizar o Login e Obter o Token do Usuario na API
-  Future<void> login(String email, String password) async =>
-      _authUser(email, password, Urls.paramLoginAuth);
+  Future<void> login(String email, String password,
+          [bool rememberLogin = false]) async =>
+      _authUser(email, password, Urls.paramLoginAuth, rememberLogin);
 
   /// Metodo Responsavel por Fazer o Logout do Usuario
   void logoutUser() {
@@ -104,6 +133,8 @@ class AuthProvider with ChangeNotifier {
     _email = null;
 
     // Limpa as SharedPreferences e Notifica as Alterações para o APP
-    Store.removeItem(Store.keyUserData).then((_) => notifyListeners());
+    Store.removeItem(Store.keyUserData)
+        .then((_) => Store.removeItem(Store.keyRefreshToken))
+        .then((_) => notifyListeners());
   }
 }

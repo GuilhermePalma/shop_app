@@ -19,21 +19,25 @@ class _AuthFormState extends State<AuthForm>
   final FocusNode _confirmPasswordFocus = FocusNode();
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   AuthType _authType = AuthType.login;
-  bool _isLoading = false;
 
-  AnimationController? _animationController;
-  Animation<double>? _opacityAnimation;
+  bool _isLoading = false;
+  bool _rememberLogin = false;
+
+  AnimationController? _animationSingUp;
+  Animation<double>? _opacityAnimationSingUp;
+
   @override
   void initState() {
     super.initState();
-    _animationController = AnimationController(
+
+    _animationSingUp = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 700),
     );
 
-    _opacityAnimation = Tween(begin: 0.0, end: 1.0).animate(
+    _opacityAnimationSingUp = Tween(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(
-        parent: _animationController!,
+        parent: _animationSingUp!,
         curve: Curves.linear,
       ),
     );
@@ -52,10 +56,10 @@ class _AuthFormState extends State<AuthForm>
   void _swithAuthType() => setState(() {
         if (_isLogin) {
           _authType = AuthType.singUp;
-          _animationController?.forward();
+          _animationSingUp?.forward();
         } else {
           _authType = AuthType.login;
-          _animationController?.reverse();
+          _animationSingUp?.reverse();
         }
       });
 
@@ -75,10 +79,12 @@ class _AuthFormState extends State<AuthForm>
           ? await _authProvider.login(
               _authData[AuthProvider.paramEmail]!,
               _authData[AuthProvider.paramPassword]!,
+              _rememberLogin,
             )
           : await _authProvider.singUp(
               _authData[AuthProvider.paramEmail]!,
               _authData[AuthProvider.paramPassword]!,
+              _rememberLogin,
             );
     } on AuthExceptions catch (error) {
       _showErrorDialog(error.getMessageError);
@@ -170,7 +176,7 @@ class _AuthFormState extends State<AuthForm>
                   duration: const Duration(milliseconds: 300),
                   curve: Curves.linear,
                   child: FadeTransition(
-                    opacity: _opacityAnimation!,
+                    opacity: _opacityAnimationSingUp!,
                     child: Padding(
                       padding: const EdgeInsets.only(top: 15.0),
                       child: TextFormField(
@@ -193,6 +199,18 @@ class _AuthFormState extends State<AuthForm>
                     ),
                   ),
                 ),
+                if (_isLogin)
+                  Row(
+                    children: [
+                      Switch.adaptive(
+                        value: _rememberLogin,
+                        onChanged: (newValue) {
+                          setState(() => _rememberLogin = newValue);
+                        },
+                      ),
+                      const Text("Lembar Dados do Usuario"),
+                    ],
+                  ),
                 const SizedBox(height: 8),
                 _isLoading
                     ? const CircularProgressIndicator()
