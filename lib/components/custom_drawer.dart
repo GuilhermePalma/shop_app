@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/models/providers/auth_provider.dart';
+import 'package:shop/pages/orders_page.dart';
+import 'package:shop/utils/custom_routes.dart';
 import 'package:shop/utils/routes.dart';
 
 class CustomDrawer extends StatelessWidget {
@@ -62,7 +64,9 @@ class CustomDrawer extends StatelessWidget {
         title: Text(item["title"] as String),
         onTap: () {
           if (item.containsKey("route")) {
-            Navigator.of(context).pushReplacementNamed(item["route"] as String);
+            Navigator.of(context).pushReplacementNamed(
+              item["route"] as String,
+            );
           } else if (item.containsKey("onTap")) {
             (item["onTap"] as Function).call();
           }

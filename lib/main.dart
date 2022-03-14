@@ -12,6 +12,7 @@ import 'package:shop/pages/products_overview_page.dart';
 import 'package:shop/models/providers/cart_provider.dart';
 import 'package:shop/models/providers/orders_provider.dart';
 import 'package:shop/models/providers/products_provider.dart';
+import 'package:shop/utils/custom_routes.dart';
 import 'package:shop/utils/routes.dart';
 
 void main() => runApp(const MyApp());
@@ -49,6 +50,12 @@ class MyApp extends StatelessWidget {
           fontFamily: "Lato",
           colorScheme: const ColorScheme.light(primary: Colors.purple)
               .copyWith(secondary: Colors.deepOrange),
+          pageTransitionsTheme: PageTransitionsTheme(
+            builders: {
+              TargetPlatform.iOS: CustomPageTransitionsBuilder(),
+              TargetPlatform.android: CustomPageTransitionsBuilder(),
+            },
+          ),
         ),
         routes: {
           Routes.routeHome: (ctx) => const HomePage(),
