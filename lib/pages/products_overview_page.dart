@@ -78,8 +78,10 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
           Consumer<CartProvider>(
             // Child define um Item Imutavel
             child: IconButton(
-              onPressed: () =>
-                  Navigator.of(context).pushNamed(Routes.routeCartPage),
+              onPressed: () {
+                ScaffoldMessenger.of(context).hideCurrentSnackBar();
+                Navigator.of(context).pushNamed(Routes.routeCartPage);
+              },
               icon: const Icon(Icons.shopping_cart_rounded),
             ),
             // Constroi um Widget que pode sofrer alterações

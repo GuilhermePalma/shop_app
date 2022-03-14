@@ -92,11 +92,11 @@ class CartPage extends StatelessWidget {
       }
     }
 
-    // Configura e Exibe a Mensagem do SnackBar
-    final snackBar = SnackBar(
+    final _snackBar = ScaffoldMessenger.of(context);
+    _snackBar.hideCurrentSnackBar();
+    _snackBar.showSnackBar(SnackBar(
       backgroundColor: Theme.of(context).colorScheme.primary.withOpacity(0.6),
       content: Text(textSnackBar),
-    );
-    ScaffoldMessenger.of(context).showSnackBar(snackBar);
+    ));
   }
 }
