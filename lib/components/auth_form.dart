@@ -21,7 +21,7 @@ class _AuthFormState extends State<AuthForm>
   AuthType _authType = AuthType.login;
 
   bool _isLoading = false;
-  bool _rememberLogin = false;
+  bool _rememberLogin = true;
 
   AnimationController? _animationSingUp;
   Animation<double>? _opacityAnimationSingUp;
